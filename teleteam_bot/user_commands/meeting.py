@@ -325,7 +325,7 @@ def list_meetings(update, context):
     # Check if there are any meetings or not
     if not meetings:
         LOGGER.info(f'Chat_id {chat_id}: No meetings 🙈') 
-        if update.effective_message.chat.type == Chat.PRIVATE:
+        if update.effective_message.chat.type == 'private':
             text='You have no meetings in any of your groups. Enter /createmeeting in a group to create one.'
         else:
             text='There are no meetings in this group. Enter /createmeeting to create one.'

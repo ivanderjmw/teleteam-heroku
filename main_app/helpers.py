@@ -19,6 +19,7 @@ def start_group(group_chat, bot):
         flag = None
         new_group = Group.objects.get(group_chat_id=group_chat.id)
     else:
+        flag = True
         new_group = Group(group_chat_id=group_chat.id, chat_title=group_chat.title)
     
     # Try to get the telegram chat photo
@@ -151,7 +152,7 @@ def get_meeting_query(chat, all=False):
     """
     try:
         # Get objects from other tables
-        if chat.type == Chat.PRIVATE:
+        if chat.type == 'private':
             user = User.objects.get(username=chat.username)
             print(user)
             groups_with_user = Group.objects.filter(members__in = [user])

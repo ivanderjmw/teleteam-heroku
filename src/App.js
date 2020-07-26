@@ -130,11 +130,14 @@ class App extends Component {
   }
 
   render () {
+    if (this.state.loggedIn != this.getLoginStatus()) {
+      this.setState({loggedIn: this.getLoginStatus()});
+    }
     return (
         <div className="App">
           <Switch>
             <Route path="/login" render={props => <LoginPage onLogin={this.handleLogin} {...props}/>}/>
-            <PrivateRoute isLoggedIn={ this.getLoginStatus() } path="/" component={Protected} />
+            <PrivateRoute isLoggedIn={ this.state.loggedIn } path="/" component={Protected} />
           </Switch>
         </div>
     );
