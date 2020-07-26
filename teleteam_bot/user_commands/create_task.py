@@ -15,6 +15,13 @@ GET_TITLE, GET_USERS, GET_DUE_DATE = range(3)
 
 def create_new_task(update, context):
 
+    # Check if user has /join.
+    if not User.objects.filter(user_id = update.effective_message.from_user.id).exists():
+        context.bot.sendMessage(
+            update.message.chat_id, 
+            text='Please /join the group before starting the /createtask command.')
+        return
+
     chat_id = update.effective_message.chat.id
 
     LOGGER.info("User {} createtask: creates a new task in id={}".format(chat_id, chat_id))
