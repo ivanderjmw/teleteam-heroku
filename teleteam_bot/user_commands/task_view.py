@@ -6,7 +6,7 @@ from telegram import Chat
 from main_app.models import Task
 from main_app.helpers import edit_assigned_users_query
 
-import arrow, dateparser
+import dateparser
 
 def select_task(update, context):
     is_private_chat = update.effective_chat.type == Chat.PRIVATE
@@ -39,26 +39,20 @@ def taskview_message(task, private_chat=False, numbering=None):
     usernames = []
     for user in task.assigned_users.all():
         usernames += [user.username]
-
-    if arrow.get(task.deadline).to("Asia/Singapore") < arrow.now().shift(hours=3):
-        deadline = arrow.get(task.deadline).to("Asia/Singapore").humanize(granularity=["hour", "minute"])
-    elif arrow.get(task.deadline).to("Asia/Singapore").day == arrow.now().day:
-        deadline = "today at " + arrow.get(task.deadline).to("Asia/Singapore").format("HH:mm")
-    else:
-        deadline = arrow.get(task.deadline).to("Asia/Singapore").format("HH:mm dddd, D MMM YYYY")
+    deadline = task.deadline.strftime('%b %d %Y')
 
     number = "" if numbering == None else str(numbering)+'. '
 
     if private_chat:
         if task.done:
-            return f'<b>-- Done! --</b>\n{number}{title} - {task.group.chat_title}\n@{" @".join(usernames)} - due {deadline}'
+            return f'<b>-- Done! --</b>\n{number}{title} - {task.group.chat_title}\n👥Assigned Users - {" ".join(usernames)}\n🗓Deadline - {deadline}'
         else:
-            return f'<b>{number}{title} - {task.group.chat_title}</b>\n@{"@".join(usernames)} - due {deadline}'
+            return f'<b>{number}{title} - {task.group.chat_title}</b>\n👥Assigned Users - {" ".join(usernames)}\n🗓Deadline - {deadline}'
     else:
         if task.done:
-            return f'<b>-- Done! --</b>\n{number}{title}\n@{" @".join(usernames)} - due {deadline}'
+            return f'<b>-- Done! --</b>\n<b>{number}{title}</b>\nAssigned Users 👥{" ".join(usernames)}\nDeadline 🗓{deadline}'
         else:
-            return f'<b>{number}{title}</b>\n@{"@".join(usernames)} - due {deadline}'
+            return f'<b>{number}{title}</b>\n👥Assigned Users - {" ".join(usernames)}\n🗓Deadline - {deadline}'
 
 def set_done(update, context):
     try:
@@ -103,7 +97,7 @@ def edit_name(update, context):
     task.save()
 
     # Reply to user that process is completed
-    text = "Task saved!"
+    text = "✅Task saved!"
 
     # Send the message
     context.bot.sendMessage(update.message.chat_id, text=text)
@@ -117,7 +111,7 @@ def edit_due_date(update, context):
     # Get the user reply (new name)
     new_task_due_date = dateparser.parse(update.message.text)
 
-    if new_task_due_date is None:
+    if new_task_due_date is None or len(update.message.text) < 4:
         # Tell the user it's an invalid date and prompt again.
         text = "Invalid Date! Reenter a correct date"
         context.bot.sendMessage(update.message.chat_id, text=text)
@@ -127,12 +121,12 @@ def edit_due_date(update, context):
     taskid = context.chat_data['taskid']
     task = Task.objects.get(id=taskid)
     
-    # Change the title and save
-    task.title = new_task_due_date
+    # Change the deadline and save
+    task.deadline = new_task_due_date
     task.save()
 
     # Reply to user that process is completed
-    text = "Task saved!"
+    text = "✅Task saved!"
 
     # Send the message
     context.bot.sendMessage(update.message.chat_id, text=text)
@@ -141,7 +135,7 @@ def edit_due_date(update, context):
 
 def edit_assigned_users(update, context):
     """Handles the edit due date command"""
-    print(context.chat_data)
+    print("Edit assigned Users", context.chat_data)
 
     # Get the user reply (new name)
     assigned_users = update.message.text
@@ -153,10 +147,11 @@ def edit_assigned_users(update, context):
     assigned_users_list = assigned_users.replace('@', '').split(' ')
 
     # Call the helper function
+    print("Calling helper function")
     edit_assigned_users_query(taskid, assigned_users_list)
 
     # Reply to user that process is completed
-    text = "Task saved!"
+    text = "✅Task saved!"
 
     # Send the message
     context.bot.sendMessage(update.message.chat_id, text=text)
@@ -244,7 +239,7 @@ def edit_methods(update, context):
         return
 
     # Send the message
-    context.bot.sendMessage(update.effective_chat.id, text=text)
+    query.edit_message_text(text=text)
 
     # Returns a callback to the query
     context.bot.answer_callback_query(query.id)
@@ -273,7 +268,7 @@ def edit_task(update, context):
         editname = InlineKeyboardButton(text='Edit name', callback_data=EDIT_NAME+str(taskid))
         editdeadline = InlineKeyboardButton(text='Edit deadline', callback_data=EDIT_DUE_DATE+str(taskid))
         editusers = InlineKeyboardButton(text='Edit users', callback_data=EDIT_USERS+str(taskid))
-        replace = InlineKeyboardButton(text='Replace with new task', callback_data=EDIT_DELETE+str(taskid))
+        replace = InlineKeyboardButton(text='Delete task', callback_data=EDIT_DELETE+str(taskid))
         back = InlineKeyboardButton(text='Back', callback_data="TASK:"+str(taskid))
 
         inline_keyboard = [[editname, editdeadline, editusers], [replace, back]]

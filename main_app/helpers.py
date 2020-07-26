@@ -1,21 +1,52 @@
 """
 Helper functions for Database Queries
 """
-from datetime import datetime, timedelta
+import os
 import dateparser
+from datetime import datetime, timedelta
+
 
 from django.utils.timezone import now, make_aware
-
-from .models import UserSettings, User, Group, Task, Meeting, Reminder, Poll, Choice, Vote, TASK, MEETING
+from django.core.files import File
+from main_app.models import UserSettings, User, Group, Task, Meeting, Reminder, Poll, Choice, Vote, TASK, MEETING
 from teleteam_bot.user_commands import reminders
+from django.conf import settings
 
-def start_group(group_chat):
+def start_group(group_chat, bot):
+
     # Check if group already exists.
-    if Group.objects.filter(group_chat_id = group_chat.id).exists():
-        return None
+    if Group.objects.filter(group_chat_id=group_chat.id).exists():
+        flag = None
+        new_group = Group.objects.get(group_chat_id=group_chat.id)
+    else:
+        new_group = Group(group_chat_id=group_chat.id, chat_title=group_chat.title)
+    
+    # Try to get the telegram chat photo
+    try:
+        # Get chat object from Telegram API
+        chat = bot.get_chat(group_chat.id)
 
-    new_group = Group(group_chat_id = group_chat.id, chat_title = group_chat.title)
+        # Get photo url from Telegram API
+        photo_file = chat.photo.get_small_file()
+
+        path = settings.MEDIA_ROOT+str(chat.id)+'.jpg'
+
+        # Download to media folder
+        photo_file.download(custom_path=path)
+
+        # Open the file
+        photo = open(path, 'rb')
+        new_group.photo = File(photo)
+        os.remove(path)
+
+        print(f'Group Photo is retrieved for {chat.title}')
+    except Exception as e:
+        print(e)
+
     new_group.save()
+
+    if flag is None:
+        return None
 
     return new_group
 
@@ -60,6 +91,23 @@ def create_task(chat_id, title, deadline, assigned_usernames):
     except KeyError:
         raise KeyError("Either group or user is not registered yet.")
 
+    # Create a reminder for each assigned users
+    try:
+        for assigned_user in new_task.assigned_users.filter(settings__autoCreateTaskReminder=True):
+            reminder = Reminder(
+                task=new_task, 
+                meeting=None, 
+                reminding_type=TASK, 
+                recipient=assigned_user, 
+                time = deadline - assigned_user.settings.defaultTaskReminderTimedelta
+            )
+            reminder.save()
+
+            # Notify the user via a private chat that a reminder has been set
+            reminders.reminder_set_notification(reminder)
+    except Exception as e:
+        print(e)
+
 def list_tasks(chat, private_chat=False):
     if private_chat:
         user = User.objects.get(username=chat.username)
@@ -95,6 +143,23 @@ def create_meeting_query(chat_id, title, time):
 
     except KeyError:
         raise KeyError("Either group or user is not registered yet.")
+
+    # Create a reminder for each member in the group
+    try:
+        for member in group.members.filter(settings__autoCreateMeetingReminder = True):
+            reminder = Reminder(
+                task=None, 
+                meeting = new_meeting, 
+                reminding_type=MEETING, 
+                recipient=member, 
+                time = time - member.settings.defaultMeetingReminderTimedelta
+            )
+            reminder.save()
+
+            # Notify the user via a private chat that a reminder has been set
+            reminders.reminder_set_notification(reminder)
+    except Exception as e:
+        print(e)
 
 def get_meeting_query(chat_id, all=False):
     """
