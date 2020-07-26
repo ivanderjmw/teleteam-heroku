@@ -81,7 +81,7 @@ TEMPLATES = [
             ],
         },
     },
-]np
+]
 
 WSGI_APPLICATION = 'teleteam.wsgi.application'
 
