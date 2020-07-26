@@ -17,19 +17,21 @@ def tasklist(update, context):
 
     tasks = helpers.list_tasks(update.effective_chat, private_chat)
 
-    if query != None and query.data[len("tasklist:"):] == "detailedview":
-        detailed_view = True
+    if private_chat and (query == None or len(query.data) == len("tasklist")):
+        user_settings = helpers.get_user_settings(chat=update.effective_chat)
+        detailed_view = user_settings.botDetailedViewOnDefault
+    else:
+        detailed_view = query != None and query.data[len("tasklist"):] == ":detailedview"
+
+    if detailed_view:
         count = 1
         for task in tasks: 
             if task.done == False:
                 text += task_view.taskview_message(task, private_chat=private_chat, numbering=count) + "\n\n"
                 count += 1
-    else:
-        detailed_view = False
 
     reply_markup = tasklist_keyboard(tasks, private_chat, detailed_view=detailed_view)
 
-    # COMMENT
     if(query is not None):
         query.edit_message_text(text=text, parse_mode=ParseMode.HTML, reply_markup=reply_markup)
         context.bot.answer_callback_query(query.id)
@@ -56,8 +58,8 @@ def tasklist_keyboard(tasks, private_chat, detailed_view=False):
     if not private_chat:
         inline_keyboard += [[add_task_button]]
     else:
-        text = "👀 See details" if detailed_view == False else "🕶 Hide details"
-        callback_data = "tasklist:detailedview" if detailed_view == False else "tasklist:buttonsview"
+        text = "🕶 Hide details" if detailed_view else "👀 See details"
+        callback_data = "tasklist:buttonsview" if detailed_view else "tasklist:detailedview"
         detailed_view_button = InlineKeyboardButton(text=text, callback_data=callback_data)
         inline_keyboard += [[detailed_view_button]]
 

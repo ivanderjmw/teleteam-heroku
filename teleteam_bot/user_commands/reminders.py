@@ -22,41 +22,77 @@ REMINDER_SCHEDULE_OPTIONS = [
     ["6 hours before", 360]
 ]
 
+def set_reminder_to_users(recipients, meeting, task, update_fields=[], type=MEETING):
+    """Given a list of recipient users, send a reminder for a meeting or task."""
+    try:
+        for recipient in recipients:
+            reminder = Reminder(reminding_type=type, recipient=recipient)
+
+            if type == MEETING:
+                reminder.meeting = meeting
+                reminder.time = meeting.time - recipient.settings.defaultMeetingReminderTimedelta
+            else:
+                reminder.task = task
+                reminder.time = task.deadline - recipient.settings.defaultTaskReminderTimedelta
+
+            reminder.save()
+
+            # Notify the user via a private chat that a reminder has been set
+            reminder_set_notification(reminder, update_fields)
+        
+    except Exception as e:
+        print(e)
+
 def display_reminder_text(reminder, message, new_reminder=False):
+    #TODO: Clean up this mess.
+
     if message is not None:
-        text = message + "\n"
+        text = message + "\n\n"
     else:
         text = ""
 
     if reminder.reminding_type == TASK:
         text += "<b>" + reminder.task.title + "</b>"
-        text += "\ndue " + arrow.get(reminder.task.deadline).format(arrow.FORMAT_COOKIE)
+        event_time = reminder.task.deadline
+        text += "\ndue "
     else:
         text += "<b>" + reminder.meeting.title + "</b>"
-        text += "\ntime: <b>" + arrow.get(reminder.meeting.time).format(arrow.FORMAT_COOKIE) + "</b>"
-        if new_reminder:
-            text += "\nwe will remind you at: " + arrow.get(reminder.time).format(arrow.FORMAT_COOKIE)
-        else:
-            text += "\n" + arrow.get(reminder.time).humanize()
+        event_time = reminder.meeting.time
+        text += "\n⏱: "
+    
+    if arrow.get(reminder.time).to("Asia/Singapore") < arrow.now().shift(hours=12):
+        text += arrow.get(event_time).to("Asia/Singapore").humanize(granularity=["hour", "minute"])
+        humanized_reminder_time = arrow.get(reminder.time).to("Asia/Singapore").humanize(granularity=["hour", "minute"])
+    else:
+        text += arrow.get(event_time).to("Asia/Singapore").format("HH:mm dddd, D MMM YYYY")
+        humanized_reminder_time = arrow.get(reminder.time).to("Asia/Singapore").format("HH:mm dddd, D MMM YYYY")
+
+    if new_reminder:
+        text += "\n\nwe will remind you: " + humanized_reminder_time
 
     return text
 
-def reminder_set_notification(reminder):
-
+def reminder_set_notification(reminder, update_fields):
     dp = DjangoTelegramBot.dispatcher
 
     if reminder.reminding_type == TASK:
-        message = "You have been assigned a task in the group \"" + reminder.task.group.chat_title + "\"\n"
+        if (update_fields == []):
+            message = "You have been assigned a task in the group \"" + reminder.task.group.chat_title + "\"\n"
+        else:
+            message = "Task updated in the group \"" + reminder.task.group.chat_title + "\"\n"
     else:
-        message = "New meeting in the group \"" + reminder.meeting.group.chat_title + "\""
+        if (update_fields == []):
+            message = "New meeting in the group \"" + reminder.meeting.group.chat_title + "\""
+        else:
+            message = "Meeting updated in the group \"" + reminder.meeting.group.chat_title + "\"\n"
     text = display_reminder_text(reminder, message, new_reminder=True)
 
     reply_markup = display_reminder_keyboard(reminder)
     dp.bot.send_message(reminder.recipient.user_id, text=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
 def display_reminder_keyboard(reminder):
-    cancel_reminder = InlineKeyboardButton(text="No need to remind me!", callback_data="REMINDER-DELETE:"+str(reminder.id))
-    change_date = InlineKeyboardButton(text="Change time", callback_data="REMINDER-CHANGETIME:"+str(reminder.id))
+    cancel_reminder = InlineKeyboardButton(text="🗑 Delete reminder", callback_data="REMINDER-DELETE:"+str(reminder.id))
+    change_date = InlineKeyboardButton(text="⏱ Change time", callback_data="REMINDER-CHANGETIME:"+str(reminder.id))
 
     return InlineKeyboardMarkup([[cancel_reminder, change_date]])
 
@@ -115,7 +151,7 @@ def reminder_set_time(update, context):
     else:
         reminder.time = reminder.meeting.time - timedelta(minutes=time_option_minutes)
     
-    text = display_reminder_text(reminder, message="Reminder time settings changed!")
+    text = display_reminder_text(reminder, message="Reminder time settings changed!", new_reminder=True)
     
     reminder.save()
 
@@ -132,7 +168,7 @@ def scan_and_send_reminders():
     reminders = Reminder.objects.all()
 
     for reminder in reminders:
-        if reminder.time <= make_aware(datetime.now()):
+        if arrow.get(reminder.time).to('Asia/Singapore') <= arrow.now().to('Asia/Singapore'):
             dp.bot.send_message(
                 reminder.recipient.user_id,
                 parse_mode=ParseMode.HTML,
