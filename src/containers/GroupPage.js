@@ -78,6 +78,7 @@ class GroupPage extends React.Component {
             <Row align="middle" className="group-header">
             <Col span={12}>
                 <Title>{this.state.group_data.chat_title}</Title>
+                <Text>This is a Group Page. Scroll down to view members, tasks, meetings, and statistics!</Text>
             </Col>
             <Col span={12} style={{ textAlign:"right" }}>
                 <Space>
@@ -94,13 +95,6 @@ class GroupPage extends React.Component {
                 </Space>
             </Col>
             </Row>
-            {/* TODO: Group goals or project due date.
-                <Space>
-                <Text strong={true}>Goal:</Text>
-                <Text editable={{ onChange: this.onChange }}>{this.state.str}</Text>
-                <Text strong={true}>Due:</Text>
-                <Text editable={{ onChange: this.onChange }}>{this.state.str}</Text>
-            </Space> */}
 
             <Divider/>
 
