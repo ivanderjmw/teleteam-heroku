@@ -318,31 +318,38 @@ def list_meetings(update, context):
     chat_id = update.effective_message.chat.id
 
     LOGGER.info(f'Chat_id {chat_id}: Query meetings')
-    
+
     # Queries for the Meeting items
     meetings = get_meeting_query(update.effective_message.chat)
 
     # Check if there are any meetings or not
     if not meetings:
-        LOGGER.info(f'Chat_id {chat_id}: No meetings 🙈')
-        context.bot.sendMessage(chat_id=chat_id, text='There are no meetings in this group. Enter /createmeeting to create one.')
+        LOGGER.info(f'Chat_id {chat_id}: No meetings 🙈') 
+        if update.effective_message.chat.type == Chat.PRIVATE:
+            text='You have no meetings in any of your groups. Enter /createmeeting in a group to create one.'
+        else:
+            text='There are no meetings in this group. Enter /createmeeting to create one.'
+        context.bot.sendMessage(chat_id=chat_id, text=text)
     else:
         LOGGER.info(f'Chat_id {chat_id}: Stitching meetings')
         # Use inline keyboard to show the meetings
-        text_arr = ["You upcoming meetings 💡:"]
+        text_arr = ["Your upcoming meetings 💡:"]
 
         # Stitch the meeting info together into one message.
         for meeting in meetings:
-            text_arr.append('<b>' + str(meeting.title) + '</b> - ' + str(meeting.time.strftime('%A, %d %b %Y at %l:%M %p')))
+            text_to_append = '<b>' + str(meeting.title) + '</b> - ' 
+
+            if update.effective_message.chat.type == Chat.PRIVATE:
+                text_to_append += meeting.group.chat_title + ' '
+            
+            text_to_append += str(meeting.time.strftime('%A, %d %b %Y at %l:%M %p'))
+            text_arr.append(text_to_append)
 
         text = '\n'.join(text_arr)
 
     LOGGER.info(f'Chat_id {chat_id}: Send meetinglist')
     context.bot.sendMessage(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
-
-    return
-
-
+    
 
 def cancel(update, context):
     """Ends the conversation"""
