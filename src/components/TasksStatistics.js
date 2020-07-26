@@ -53,7 +53,7 @@ class TasksStatistics extends React.Component{
                 is represented red background, giving the illusion that there are 
                 three parts to the Progress line. */}
                 <Progress 
-                    percent={percentUpcoming} 
+                    percent={percentUpcoming+percentDone} 
                     successPercent={percentDone} 
                     showInfo={false}
                     trailColor="red"/>
