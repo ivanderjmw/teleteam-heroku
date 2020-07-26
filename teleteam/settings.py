@@ -256,8 +256,7 @@ REST_FRAMEWORK = {
 
 # Django CORS HEADERS
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'https://localhost:3000',
+    'localhost:3000',
 )
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -266,7 +265,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
 
 
 STATIC_URL = '/static/'
