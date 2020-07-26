@@ -263,7 +263,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'token',
 ]
-<<<<<<< HEAD
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -285,5 +284,3 @@ django_heroku.settings(locals())
 
 # SSLMODE issue workaround
 del DATABASES['default']['OPTIONS']['sslmode']
-=======
->>>>>>> 8a8576f8276541c8b93a208294c7b09be4e83262
