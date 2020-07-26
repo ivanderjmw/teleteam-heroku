@@ -22,11 +22,22 @@ You will receive a notification for the tasks both when creating and nearing the
 <b>Feel free to use the web client, teleteam.herokuapp.com, for better navigation and visualization.</b>
     """
     else:
-        text = """
-        <b>Teleteam Help</b>\n\
-        \n<b>Tasks</b>
-        /tasklist - See all of your tasks
-        \n<b>Meetings</b>
+        text = """\
+<b>Teleteam Help</b>
 
-        """
+<b>✴️Getting Started</b>
+Make sure you have /join in at least one group.
+
+<b>🏋️‍♀️Dealing with Tasks</b>
+/tasklist - Lists all of your tasks from different groups.
+
+<b>👨‍💻Schedule Meetings</b>
+/meetinglist - List the meetings in the current group.
+
+You will receive a notification when tasks (that you are assigned to) and meetings are created or edited. (You can change this in the Settings page of the web app)
+We will send a reminder when the task/meeting is near.
+
+<b>Feel free to use the web client, teleteam.herokuapp.com, for better navigation and visualization.</b>
+    """
+
     context.bot.sendMessage(update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
