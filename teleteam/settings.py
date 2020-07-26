@@ -255,7 +255,8 @@ REST_FRAMEWORK = {
 
 # Django CORS HEADERS
 CORS_ORIGIN_WHITELIST = (
-    'localhost:3000',
+    'http://localhost:3000',
+    'https://localhost:3000',
 )
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'token',
