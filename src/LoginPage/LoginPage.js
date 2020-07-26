@@ -54,7 +54,7 @@ class LoginPage extends React.Component {
                         <h1>Start using Teleteam</h1>
                         <p>A task manager for your Telegram chat groups. Add the bot handle <span style={{fontWeight:'bold'}}>(@teleteam_bot)</span> to your group, or click the link <a href='https://telegram.me/teleteam_bot' target="_blank" style={{background: '#4545F4', borderRadius: '4px', padding: '4px', fontSize: '2ex', color: 'white', fontWeight: 'bold'}}>here</a>.</p>
 
-                        <TelegramLoginButton dataOnauth={this.handleTelegramResponse} botName="circuitbrekerbot" />
+                        <TelegramLoginButton dataOnauth={this.handleTelegramResponse} botName="teleteam_bot" />
                     </div>
                 </div>
             </div>

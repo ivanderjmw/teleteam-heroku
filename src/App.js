@@ -9,7 +9,7 @@ import { CreateMeetingButton, CreateTaskButton } from './components';
 import { AppLayout, GroupPage, HomePage, SettingsPage } from './containers';
 import LoginPage from './LoginPage/LoginPage';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api/';
+axios.defaults.baseURL = 'http://teleteam.herokuapp.com/api/';
 
 const PrivateRoute = ({ isLoggedIn, ...props }) =>
   isLoggedIn

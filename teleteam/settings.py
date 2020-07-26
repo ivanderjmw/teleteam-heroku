@@ -182,7 +182,7 @@ DJANGO_TELEGRAMBOT = {
                         # NB: if use polling you must provide to run
                         # a management command that starts a worker
 
-    'WEBHOOK_SITE' : os.getenv('WEBHOOK_SITE'),
+    'WEBHOOK_SITE' : 'https://teleteam.herokuapp.com',
     'WEBHOOK_PREFIX' : '/prefix', # (Optional[str]) # If this value is specified,
                                   # a prefix is added to webhook url
 
@@ -198,7 +198,7 @@ DJANGO_TELEGRAMBOT = {
 
     'BOTS' : [
         {
-           'TOKEN': os.getenv('BOT_TOKEN'), #Your bot token.
+           'TOKEN': '1160495867:AAF90CYdpZXg1bf7eWg8geqm4pYZqstepaY', #Your bot token.
 
            'CONTEXT': True,  # Use context based handler functions
 
