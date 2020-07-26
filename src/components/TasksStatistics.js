@@ -23,6 +23,12 @@ class TasksStatistics extends React.Component{
 
     render(){
 
+        if (this.props.tasks.length == 0){
+            return (
+                <span>Create tasks to see the statistics</span>
+            );
+        }
+
         // An array of tasks with deadline within a week ago and a week from 
         // now.
         let tasksWithNearDeadlines = this.props.tasks.filter(task => {

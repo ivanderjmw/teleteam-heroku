@@ -1,13 +1,10 @@
 """Django Models"""
 import uuid
-from datetime import datetime, timedelta
 
 from django.db import models
 from django.utils.timezone import now
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
 
-upload_storage = FileSystemStorage(location=settings.STATIC_ROOT, base_url='/static')
+from datetime import datetime, timedelta
 
 TASK = 1
 MEETING = 2
@@ -38,8 +35,8 @@ class Group(models.Model):
     """Group model for Teleteam"""
     group_chat_id = models.IntegerField()
     chat_title = models.CharField(max_length=50)
+    photo_url = models.CharField(max_length=256, null=True)
     members = models.ManyToManyField(User)
-    photo = models.ImageField(upload_to='media/', null=True, storage=upload_storage)
     def __str__(self):
         return f"{self.group_chat_id}:{self.chat_title}"
 
@@ -55,13 +52,6 @@ class Group(models.Model):
     def closest_deadline(self):
         return self.task_set.filter(done=False).order_by('deadline').first().deadline
 
-    @property
-    def photo_url(self):
-        if (self.photo):
-            return self.photo.url
-        else:
-            return
-
 class Task(models.Model):
     """Task model for Teleteam"""
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
@@ -69,6 +59,7 @@ class Task(models.Model):
     done = models.BooleanField(default=False)
     assigned_users = models.ManyToManyField(User)
     deadline = models.DateTimeField(default=now)
+    
     def __str__(self):
         return f"{self.title},{self.group},{self.deadline}"
 
