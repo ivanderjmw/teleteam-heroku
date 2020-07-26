@@ -270,6 +270,7 @@ PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'build/static'),
+    os.path.join(BASE_DIR, 'public'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
