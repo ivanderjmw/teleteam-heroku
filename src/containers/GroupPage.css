@@ -1,0 +1,10 @@
+
+
+@media only screen and (max-width: 922px) {
+    .group-header{
+        display: block;
+    }
+    .group-header .ant-col {
+        text-align: left !important;
+    }
+  } 

@@ -1,0 +1,41 @@
+.jumbotron {
+    display: block;
+    height: 100vh;
+    background: #00006D;
+}
+.jumbotron .container {
+    position: absolute;
+    top: 40vh;
+    display: block;
+    width: 100%;
+    margin-top: 30px;
+    padding: 1em;
+    text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+p, h1 {
+    color: #fff;
+}
+
+@media only screen and (min-width: 600px) {
+    p {
+        font-size: 3ex;
+    }
+    h1 {
+        font-size: 8ex;
+    }
+  }
+
+#telegram-login-circuitbrekerbot {
+    margin-top: 30px;
+}
+
+.jumbotron-logo {
+    position: absolute;
+    top: 40vh;
+    left: 50vw;
+    transform: translate(-50%, -100%);
+    width: 200px;
+    margin-bottom: 50px;
+}

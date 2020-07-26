@@ -1,0 +1,28 @@
+.profile {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: grid;
+    grid-template: 1fr / 1fr 4fr;
+}
+.profile .profile-name {
+    grid-column: 2;
+    vertical-align: middle;
+    text-align: left;
+    font-weight: 900;
+    font-size: 18px;
+    color: #fff;
+}
+.profile .profile-avatar {
+    grid-column: 1;
+}
+
+.user-profile-menu-item {
+    background-color: #00006D !important;
+    height: 50px;
+}
+
+@media only screen and (max-width: 992px) {
+    .profile .profile-name {
+        visibility: hidden;
+    }
+  }
