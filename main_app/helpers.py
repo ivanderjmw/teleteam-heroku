@@ -144,33 +144,21 @@ def create_meeting_query(chat_id, title, time):
     except KeyError:
         raise KeyError("Either group or user is not registered yet.")
 
-    # Create a reminder for each member in the group
-    try:
-        for member in group.members.filter(settings__autoCreateMeetingReminder = True):
-            reminder = Reminder(
-                task=None, 
-                meeting = new_meeting, 
-                reminding_type=MEETING, 
-                recipient=member, 
-                time = time - member.settings.defaultMeetingReminderTimedelta
-            )
-            reminder.save()
-
-            # Notify the user via a private chat that a reminder has been set
-            reminders.reminder_set_notification(reminder)
-    except Exception as e:
-        print(e)
-
-def get_meeting_query(chat_id, all=False):
+def get_meeting_query(chat, all=False):
     """
     Gets the meetings, returns a queryset object in ascending time order.
     all: False, Get upcoming meetings, else get all.
     """
     try:
         # Get objects from other tables
-        group = Group.objects.get(group_chat_id=chat_id)
-
-        meetings = Meeting.objects.filter(group=group, time__gte=now()).order_by('time')
+        if chat.type == Chat.PRIVATE:
+            user = User.objects.get(username=chat.username)
+            print(user)
+            groups_with_user = Group.objects.filter(members__in = [user])
+            meetings = Meeting.objects.filter(group__in = groups_with_user)
+        else:
+            group = Group.objects.get(group_chat_id=chat.id)
+            meetings = Meeting.objects.filter(group=group, time__gte=now()).order_by('time')
 
     except KeyError:
         raise KeyError("Either group or user is not registered yet.")
@@ -178,7 +166,6 @@ def get_meeting_query(chat_id, all=False):
         print("Somehow there is an exception %s" % e)
 
     return meetings
-
 
 def delete_reminder(reminder_id):
     try:
