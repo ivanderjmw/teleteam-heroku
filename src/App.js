@@ -134,7 +134,7 @@ class App extends Component {
         <div className="App">
           <Switch>
             <Route path="/login" render={props => <LoginPage onLogin={this.handleLogin} {...props}/>}/>
-            <PrivateRoute isLoggedIn={ this.state.loggedIn } path="/" component={Protected} />
+            <PrivateRoute isLoggedIn={ this.getLoginStatus() } path="/" component={Protected} />
           </Switch>
         </div>
     );
