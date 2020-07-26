@@ -49,7 +49,7 @@ class LoginPage extends React.Component {
         return (
             <div id="Login-Page">
                 <div className="jumbotron">
-                    <img className="jumbotron-logo" src={'https://teleteam.herokuapp.com/static/logo_setsil.svg'} /> 
+                    <img className="jumbotron-logo" src='https://teleteam.herokuapp.com/static/logo_setsil.svg' /> 
                     <div className="container">
                         <h1>Start using Teleteam</h1>
                         <p>A task manager for your Telegram chat groups. Add the bot handle <span style={{fontWeight:'bold'}}>(@teleteam_bot)</span> to your group, or click the link <a href='https://telegram.me/teleteam_bot' target="_blank" style={{background: '#4545F4', borderRadius: '4px', padding: '4px', fontSize: '2ex', color: 'white', fontWeight: 'bold'}}>here</a>.</p>
