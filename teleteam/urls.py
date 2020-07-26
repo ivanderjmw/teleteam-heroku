@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^', include('django_telegrambot.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include('main_app.api.urls'))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + [path('', TemplateView.as_view(template_name='index.html'))]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + [re_path(r'^.*', TemplateView.as_view(template_name='index.html'))]
 
 # setup_recurring_tasks()
