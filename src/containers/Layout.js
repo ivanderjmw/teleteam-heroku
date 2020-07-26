@@ -16,7 +16,7 @@ class AppLayout extends React.Component {
 
     constructor (props) {
       super(props);
-      this.state = {groups: this.props.groups};
+      this.state = {groups: props.groups};
     }
 
     sidebarGroups = () => {
