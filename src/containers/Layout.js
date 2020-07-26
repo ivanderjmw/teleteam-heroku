@@ -20,7 +20,7 @@ class AppLayout extends React.Component {
     }
 
     sidebarGroups = () => {
-      if (this.state.group === undefined || this.state.group.length == 0){
+      if (this.state.groups.length == 0){
         return <Menu.Item>You have no groups registered.</Menu.Item>
       }
       return this.state.groups.map( group => {
@@ -60,7 +60,7 @@ class AppLayout extends React.Component {
             <Profile user={this.props.user} />
           </Menu.Item>
           <SubMenu key="sub1" icon={<UserOutlined />} title="Your groups">
-            {this.state.groups ? this.sidebarGroups() : 'Loading'}
+            {!this.state.groups ? 'Loading' : this.sidebarGroups()}
           </SubMenu>
           <SubMenu key="sub2" icon={<LaptopOutlined />} title="Account">
             <Menu.Item key="5"><Link to={"/settings"}>Settings</Link></Menu.Item>
