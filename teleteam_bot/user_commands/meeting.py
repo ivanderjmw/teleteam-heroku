@@ -339,7 +339,7 @@ def list_meetings(update, context):
         for meeting in meetings:
             text_to_append = '<b>' + str(meeting.title) + '</b> - ' 
 
-            if update.effective_message.chat.type == Chat.PRIVATE:
+            if update.effective_message.chat.type == 'private':
                 text_to_append += meeting.group.chat_title + ' '
             
             text_to_append += str(meeting.time.strftime('%A, %d %b %Y at %l:%M %p'))

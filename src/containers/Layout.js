@@ -14,7 +14,10 @@ const { Header, Footer, Sider, Content } = Layout;
 
 class AppLayout extends React.Component {
 
-    state = {groups: this.props.groups};
+    constructor (props) {
+      super(props);
+      this.state = {groups: this.props.groups};
+    }
 
     sidebarGroups = () => {
       if (this.state.group === undefined || this.state.group.length == 0){
