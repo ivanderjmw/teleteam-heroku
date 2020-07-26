@@ -30,7 +30,7 @@ class LoginPage extends React.Component {
             hash: user.hash
         }).then( res => {
             axios.post('create', {
-                id: user.id,
+                user_id: user.id,
                 username: user.username,
                 first_name: user.first_name,
                 last_name: user.last_name,
