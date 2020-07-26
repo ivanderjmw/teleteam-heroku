@@ -318,8 +318,9 @@ def list_meetings(update, context):
     chat_id = update.effective_message.chat.id
 
     LOGGER.info(f'Chat_id {chat_id}: Query meetings')
+    
     # Queries for the Meeting items
-    meetings = get_meeting_query(chat_id)
+    meetings = get_meeting_query(update.effective_message.chat)
 
     # Check if there are any meetings or not
     if not meetings:
