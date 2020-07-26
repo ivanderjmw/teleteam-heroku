@@ -132,6 +132,7 @@ class App extends Component {
   render () {
     if (this.state.loggedIn != this.getLoginStatus()) {
       this.setState({loggedIn: this.getLoginStatus()});
+      console.log(`Change login state to ${this.state.loggedIn}`)
     }
     return (
         <div className="App">
