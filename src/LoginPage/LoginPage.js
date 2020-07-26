@@ -30,7 +30,8 @@ class LoginPage extends React.Component {
             hash: user.hash
         }).then( res => {
             const { history } = this.props;
-            axios.patch(user.id, {
+
+            axios.post('create', {
                 id: user.id,
                 username: user.username,
                 first_name: user.first_name,
@@ -39,6 +40,7 @@ class LoginPage extends React.Component {
                 auth_date: user.auth_date,
                 hash: user.hash
             })
+
             this.props.onLogin(res);
             console.log('You are logged in!');
             history.push('/');
