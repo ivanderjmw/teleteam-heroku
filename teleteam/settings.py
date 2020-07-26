@@ -30,7 +30,6 @@ SECRET_KEY = 't5)-u9bc1cw3wv&tv#z(238j@l-m2hu!qfep)sl3#(t)h-tswr'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    os.getenv('ALLOWED_HOST'),
     'teleteam.herokuapp.com',
 ]
 
@@ -255,8 +254,9 @@ REST_FRAMEWORK = {
 }
 
 # Django CORS HEADERS
-CORS_ORIGIN_ALLOW_ALL = True
-
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000',
+)
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'token',
 ]
@@ -264,12 +264,16 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
-STATIC_ROOT  =   os.path.join(PROJECT_ROOT, 'staticfiles')
+
+
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build/static'),
+]
 
-
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Django_heroku settings
 django_heroku.settings(locals())
