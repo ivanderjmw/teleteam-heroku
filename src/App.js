@@ -111,7 +111,7 @@ class App extends Component {
 
   getLoginStatus () {
     try {
-      return localStorage.getItem('logged_in')
+      return localStorage.getItem('logged_in') == 'true'
     } catch (error) {
       localStorage.setItem('logged_in', false)
       return false

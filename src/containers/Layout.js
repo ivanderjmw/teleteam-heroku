@@ -17,6 +17,8 @@ class AppLayout extends React.Component {
     state = {groups: this.props.groups};
 
     sidebarGroups = () => {
+      if (this.state.group.length == 0)
+        return <Menu.Item>You have no groups registered.</Menu.Item>
       return this.state.groups.map( group => {
       return <Menu.Item key={group.id} onClick={this.props.updateGroups}>
           <Link to={`/group?id=${group.id}`}>

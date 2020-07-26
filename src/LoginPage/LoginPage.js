@@ -19,7 +19,15 @@ class LoginPage extends React.Component {
     }
 
     loginUser = async (user) => {
-
+        await axios.post('create', {
+            user_id: user.id,
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            photo_url: user.photo_url,
+            auth_date: user.auth_date,
+            hash: user.hash
+        });
         await axios.post('authenticate', {
             id: user.id,
             username: user.username,
@@ -29,15 +37,6 @@ class LoginPage extends React.Component {
             auth_date: user.auth_date,
             hash: user.hash
         }).then( res => {
-            axios.post('create', {
-                user_id: user.id,
-                username: user.username,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                photo_url: user.photo_url,
-                auth_date: user.auth_date,
-                hash: user.hash
-            });
             const { history } = this.props;
             this.props.onLogin(res);
             console.log('You are logged in!');
