@@ -29,8 +29,6 @@ class LoginPage extends React.Component {
             auth_date: user.auth_date,
             hash: user.hash
         }).then( res => {
-            const { history } = this.props;
-
             axios.post('create', {
                 id: user.id,
                 username: user.username,
@@ -39,8 +37,8 @@ class LoginPage extends React.Component {
                 photo_url: user.photo_url,
                 auth_date: user.auth_date,
                 hash: user.hash
-            })
-
+            });
+            const { history } = this.props;
             this.props.onLogin(res);
             console.log('You are logged in!');
             history.push('/');

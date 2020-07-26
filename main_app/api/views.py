@@ -35,7 +35,7 @@ class UserListView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-@permission_classes((IsAuthenticated, ))
+@permission_classes((AllowAny, ))
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
