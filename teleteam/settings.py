@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import django_heroku
+import dj_database_url
 
 from corsheaders.defaults import default_headers
 
@@ -28,7 +30,7 @@ SECRET_KEY = 't5)-u9bc1cw3wv&tv#z(238j@l-m2hu!qfep)sl3#(t)h-tswr'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    os.getenv('ALLOWED_HOST'),
+    'teleteam.herokuapp.com',
     '127.0.0.1',
 ]
 
@@ -68,7 +70,7 @@ ROOT_URLCONF = 'teleteam.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,7 +90,8 @@ WSGI_APPLICATION = 'teleteam.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': dj_database_url.config(conn_max_age=600),
+    'localhost': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
@@ -126,12 +129,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'
 
 # Logging
 # https://docs.djangoproject.com/en/dev/topics/logging/
@@ -179,7 +176,7 @@ DJANGO_TELEGRAMBOT = {
                         # NB: if use polling you must provide to run
                         # a management command that starts a worker
 
-    'WEBHOOK_SITE' : os.getenv('WEBHOOK_SITE'),
+    'WEBHOOK_SITE' : 'https://teleteam.herokuapp.com',
     'WEBHOOK_PREFIX' : '/prefix', # (Optional[str]) # If this value is specified,
                                   # a prefix is added to webhook url
 
@@ -195,7 +192,7 @@ DJANGO_TELEGRAMBOT = {
 
     'BOTS' : [
         {
-           'TOKEN': os.getenv('BOT_TOKEN'), #Your bot token.
+           'TOKEN': '1160495867:AAF90CYdpZXg1bf7eWg8geqm4pYZqstepaY', #Your bot token.
 
            'CONTEXT': True,  # Use context based handler functions
 
