@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 
     'django_telegrambot',
     'teleteam_bot',
-    'main_app.apps.MainAppConfig',
+    'main_app',
     'rest_framework',
     
 ]
