@@ -329,7 +329,6 @@ def list_meetings(update, context):
             text='You have no meetings in any of your groups. Enter /createmeeting in a group to create one.'
         else:
             text='There are no meetings in this group. Enter /createmeeting to create one.'
-        context.bot.sendMessage(chat_id=chat_id, text=text)
     else:
         LOGGER.info(f'Chat_id {chat_id}: Stitching meetings')
         # Use inline keyboard to show the meetings

@@ -33,6 +33,7 @@ Make sure you have /join in at least one group.
 
 <b>👨‍💻Schedule Meetings</b>
 /meetinglist - List the meetings in the current group.
+/createpoll - Create a poll to to discuss the meetup timing. Can be sent later to the group chat.
 
 You will receive a notification when tasks (that you are assigned to) and meetings are created or edited. (You can change this in the Settings page of the web app)
 We will send a reminder when the task/meeting is near.

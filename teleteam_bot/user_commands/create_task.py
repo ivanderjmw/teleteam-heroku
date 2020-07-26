@@ -20,7 +20,7 @@ def create_new_task(update, context):
         context.bot.sendMessage(
             update.message.chat_id, 
             text='Please /join the group before starting the /createtask command.')
-        return
+        return ConversationHandler.END
 
     chat_id = update.effective_message.chat.id
 
