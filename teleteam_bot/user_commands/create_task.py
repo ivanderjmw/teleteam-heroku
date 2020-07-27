@@ -3,7 +3,7 @@ import dateparser
 import datetime
 
 from main_app.helpers import create_task 
-from main_app.models import Task, TaskSession, User
+from main_app.models import Task, TaskSession, User, Group 
 from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, CallbackQueryHandler, Filters
 from telegram import ParseMode
 
