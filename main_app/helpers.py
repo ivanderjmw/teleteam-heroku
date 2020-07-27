@@ -125,7 +125,7 @@ def edit_assigned_users_query(task_id, assigned_usernames):
     task.save()
 
 def create_meeting_query(chat_id, title, time):
-    """Create task from several inputs, handles multiple username assignments"""
+    """Meeting based on chat_id, title, and time"""
     try:
         group = Group.objects.get(group_chat_id=chat_id)
 

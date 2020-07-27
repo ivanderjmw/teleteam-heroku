@@ -50,8 +50,9 @@ class CreateMeeting:
             context.bot.sendMessage(chat_id=chat_id, text='‼️You can only create a meeting inside a valid telegram group.')
             return ConversationHandler.END
 
+        print(f'Asking for meeting title in {context.chat_data}')
         # Ask for the name of the meeting.
-        context.bot.sendMessage(chat_id=chat_id, text='What\'s the meeting title 📜?')
+        context.bot.sendMessage(chat_id=chat_id, text='What\'s the meeting title 📜? i.e. <i>Meetup at Starbucks for project meeting</i>', parse_mode=ParseMode.HTML)
 
         return GET_MEETING_TITLE
 
@@ -67,8 +68,10 @@ class CreateMeeting:
         # Store it in chat_data
         context.chat_data['meeting_title'] = sent_title
 
+        print(f'Asking for meeting time in {context.chat_data}')
+
         # Ask for the meeting time
-        context.bot.sendMessage(chat_id=chat_id, text='What will be the meeting time ⏱?')
+        context.bot.sendMessage(chat_id=chat_id, text='What will be the meeting time ⏱? i.e.<i>Saturday 4pm</i> or <i>1 August 12pm</i>', parse_mode=ParseMode.HTML)
 
         return GET_MEETING_TIME
 
@@ -87,6 +90,8 @@ class CreateMeeting:
         # Store it in chat_data
         context.chat_data['meeting_time'] = make_aware(sent_time)
 
+
+        print(f'Calling create meeting from {chat_data}')
         # Now call create meeting
         try:
             create_meeting_query(
@@ -94,12 +99,14 @@ class CreateMeeting:
                 title=context.chat_data['meeting_title'],
                 time=context.chat_data['meeting_time'],
             )
+            print('Successfully created meeting')
         except (TelegramError, KeyError):
             # Notify user to use the group chat
             text = f"‼️Seems like you are not in a valid group group"
             context.bot.sendMessage(text=text)
             return ConversationHandler.END
 
+        print('Sending the user back the meeting')
         # Review the meeting details
         text = f"Created a meeting titled {context.chat_data['meeting_title']} held on {context.chat_data['meeting_time'].strftime('%A, %d %b %Y at %l:%M %p')}"
         context.bot.sendMessage(chat_id=chat_id, text=text)

@@ -37,15 +37,11 @@ def create_new_task(update, context):
     LOGGER.info("User {} createtask: creates a new task in id={}".format(chat_id, chat_id))
 
     # Prompts the user to send the task name
-    context.bot.sendMessage(chat_id, text="➡️ Let's create a new task! Now please send the name of the task.")
+    context.bot.sendMessage(chat_id, text="➡️ Let's create a new task! Now please send the name of the task. i.e. <i>Prepare slides</i>")
     
     # Queries the database
-    try:
-        newtask = TaskSession.objects.get(chat_id=chat_id)
-        LOGGER.info("Task session already exists")
-    except TaskSession.DoesNotExist:
-        LOGGER.info("Creating a new task session")
-        newtask = TaskSession(chat_id=chat_id)
+    LOGGER.info("Creating a new task session")
+    newtask = TaskSession(chat_id=chat_id)
     
     newtask.save()
     
@@ -59,12 +55,12 @@ def get_title(update, context):
     title = update.message.text
 
     # Queries the database
-    newtask = TaskSession.objects.get(chat_id=update.effective_chat.id)
+    newtask = TaskSession.objects.filter(chat_id=update.effective_chat.id).last()
     LOGGER.info("Task: {}".format(str(newtask)))
     newtask.title = title
     newtask.save()
 
-    text = "Task title is <b>{}</b>\nNow enter the due date. No specific format required.".format(title)
+    text = "Task title is <b>{}</b>\nNow enter the due date. No specific format required. i.e. <i>Tomorrow 3pm</i>, or <i>31st July</i>".format(title)
     context.bot.sendMessage(update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
     
     return GET_DUE_DATE
@@ -80,11 +76,11 @@ def get_due_date(update, context):
         return GET_DUE_DATE
     
     # Queries the database
-    newtask = TaskSession.objects.get(chat_id=update.effective_chat.id)
+    newtask = TaskSession.objects.filter(chat_id=update.effective_chat.id).last()
     newtask.deadline = deadline
     newtask.save()
 
-    context.bot.sendMessage(update.message.chat_id, text=f'The due date of the task {newtask.title} is {deadline.strftime("%b %d %Y")},\nwho to assign this task?')
+    context.bot.sendMessage(update.message.chat_id, text=f'The due date of the task {newtask.title} is {deadline.strftime("%b %d %Y")},\nwho to assign this task? You can assign multiple people. i.e. <i>@teleteam_bot @someoneelse</i>')
     return GET_USERS
 
 def get_assigned_users(update, context):
@@ -95,7 +91,7 @@ def get_assigned_users(update, context):
     assigned_users = update.message.text
 
     # Queries the database
-    newtask = TaskSession.objects.get(chat_id=update.effective_chat.id)
+    newtask = TaskSession.objects.filter(chat_id=update.effective_chat.id).last()
     newtask.assigned_users = assigned_users
     newtask.save()
 
@@ -128,6 +124,7 @@ def cancel_create_task(update, context):
 
     try:
         TaskSession.objects.filter(chat_id=update.effective_chat.id).delete()
+        print('TaskSession deleted')
     except Exception:
         pass
 
