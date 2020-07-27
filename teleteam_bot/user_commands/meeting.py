@@ -15,7 +15,7 @@ from telegram.ext import (ConversationHandler,
 from telegram import (
     ParseMode, TelegramError, InlineKeyboardButton, 
     InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
-    )
+    Chat)
 
 import logging
 
@@ -31,6 +31,13 @@ class CreateMeeting:
         
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
+
+        if update.effective_message.chat.type == Chat.PRIVATE:
+            context.bot.sendMessage(
+                update.message.chat_id, 
+                text='The /createmeeting command is not available inside a private chat. \
+                Please use the command in a Teleteam registered group.')
+            return ConversationHandler.END
 
         # Clear all related chat_data
         context.chat_data.clear()

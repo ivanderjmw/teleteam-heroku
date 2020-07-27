@@ -5,7 +5,7 @@ import datetime
 from main_app.helpers import create_task 
 from main_app.models import Task, TaskSession, User, Group 
 from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, CallbackQueryHandler, Filters
-from telegram import ParseMode
+from telegram import ParseMode, Chat
 
 import logging
 
@@ -17,11 +17,16 @@ def create_new_task(update, context):
 
     chat_id = update.effective_message.chat.id
 
+    if update.effective_message.chat.type == Chat.PRIVATE:
+        context.bot.sendMessage(
+            update.message.chat_id, 
+            text='The /createtask command is not available inside a private chat. \
+            Please use the command in a Teleteam registered group.')
+        return ConversationHandler.END
+
     # Check if user has /join-ed.
     try:
-        print('CREATE_NEW_TASK Setting variable user_creating_task...')
         user_creating_task = User.objects.get(user_id = update.effective_message.from_user.id)
-        print('CREATE_NEW_TASK If not....')
         if not (user_creating_task in Group.objects.get(group_chat_id = chat_id).members.all()):
             raise KeyError
     except KeyError as e:
