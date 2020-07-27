@@ -177,7 +177,7 @@ DJANGO_TELEGRAMBOT = {
                         # a management command that starts a worker
 
     'WEBHOOK_SITE' : 'https://teleteam.herokuapp.com',
-    'WEBHOOK_PREFIX' : '/prefix', # (Optional[str]) # If this value is specified,
+    'WEBHOOK_PREFIX' : '/bot-prefix', # (Optional[str]) # If this value is specified,
                                   # a prefix is added to webhook url
 
     #'WEBHOOK_CERTIFICATE' : 'cert.pem', # If your site use self-signed

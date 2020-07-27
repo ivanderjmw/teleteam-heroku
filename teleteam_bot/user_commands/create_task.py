@@ -37,7 +37,7 @@ def create_new_task(update, context):
     LOGGER.info("User {} createtask: creates a new task in id={}".format(chat_id, chat_id))
 
     # Prompts the user to send the task name
-    context.bot.sendMessage(chat_id, text="➡️ Let's create a new task! Now please send the name of the task. i.e. <i>Prepare slides</i>")
+    context.bot.sendMessage(chat_id, text="➡️ Let's create a new task! Now please send the name of the task. i.e. <i>Prepare slides</i>", parse_mode=ParseMode.HTML)
     
     # Queries the database
     LOGGER.info("Creating a new task session")
@@ -75,17 +75,20 @@ def get_due_date(update, context):
         context.bot.sendMessage(update.message.chat_id, text='‼️That\'s not a proper date, please reenter a valid date.')
         return GET_DUE_DATE
     
+    print('Get the last tasksession object')
     # Queries the database
     newtask = TaskSession.objects.filter(chat_id=update.effective_chat.id).last()
     newtask.deadline = deadline
     newtask.save()
 
-    context.bot.sendMessage(update.message.chat_id, text=f'The due date of the task {newtask.title} is {deadline.strftime("%b %d %Y")},\nwho to assign this task? You can assign multiple people. i.e. <i>@teleteam_bot @someoneelse</i>')
+    context.bot.sendMessage(update.message.chat_id, text=f'The due date of the task {newtask.title} is {deadline.strftime("%b %d %Y")},\nwho to assign this task? You can assign multiple people. i.e. <i>@teleteam_bot @someoneelse</i>', parse_mode=ParseMode.HTML)
+    
+    print('Pass to GET_USERS state')
     return GET_USERS
 
 def get_assigned_users(update, context):
 
-    LOGGER.info("User {} createtask: gets users".format(update.effective_chat.username))
+    LOGGER.info("User {} createtask: gets users".format(update.effective_chat.id))
 
     # User inputs a list of users assigned, then confirms the task.
     assigned_users = update.message.text
@@ -104,6 +107,7 @@ def get_assigned_users(update, context):
         create_task(newtask.chat_id, newtask.title, newtask.deadline, assigned_users_list)
         print("/CREATETASK create_task() helper function ran successfully.")
         TaskSession.objects.filter(chat_id=update.effective_chat.id).delete()
+        print('Deleted tasksession')
     except Exception as e:
         LOGGER.info("{}".format(e))
         print(e)
