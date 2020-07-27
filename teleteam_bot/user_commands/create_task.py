@@ -20,7 +20,7 @@ def create_new_task(update, context):
     # Check if user has /join-ed.
     try:
         user_creating_task = User.objects.filter(user_id = update.effective_message.from_user.id)
-        if not (user_creating_task in Group.objects.get(group_chat_id = chat_id).members):
+        if not (user_creating_task in Group.objects.get(group_chat_id = chat_id).members.all()):
             raise KeyError
     except KeyError as e:
         context.bot.sendMessage(
