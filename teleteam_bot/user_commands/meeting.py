@@ -91,7 +91,7 @@ class CreateMeeting:
         context.chat_data['meeting_time'] = make_aware(sent_time)
 
 
-        print(f'Calling create meeting from {chat_data}')
+        print(f'Calling create meeting from {context.chat_data}')
         # Now call create meeting
         try:
             create_meeting_query(
