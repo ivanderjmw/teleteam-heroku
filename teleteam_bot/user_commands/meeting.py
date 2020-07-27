@@ -142,12 +142,15 @@ class TelegramMeetingPoll:
     def add_choices(update, context):
         """Get choices from the user"""
         
+        print("Waiting for user's choices")
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
         # Retrieve poll_id
         poll_id = context.chat_data['poll_id']
         poll_message_id = context.chat_data['poll_message_id']
+
+        print(f"Chat data: {context.chat_data}")
 
         # Retrieve poll object
         poll = Poll.objects.get(id=poll_id)
@@ -396,6 +399,7 @@ CREATE_MEETING_POLL_HANDLER = ConversationHandler(
     states={
         GET_TITLE:[MessageHandler(Filters.text, TelegramMeetingPoll.get_title)],
         ADD_CHOICES:[
+            CommandHandler('cancel', cancel),
             CommandHandler('undo', TelegramMeetingPoll.undo_choices),
             CommandHandler('publish', TelegramMeetingPoll.publish),
             MessageHandler(Filters.text, TelegramMeetingPoll.add_choices)
