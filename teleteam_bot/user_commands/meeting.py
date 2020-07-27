@@ -242,7 +242,7 @@ class TelegramMeetingPoll:
         # Delete choice object
         choice = Choice.objects.get(id=choice_id)
         # Notify the user about undo success button
-        context.bot.sendMessage(chat_id, text=f'The option {arrow.get(choice.time).to('Asia/Singapore').format("HH:mm dddd, D MMM YYYY")} was deleted')
+        context.bot.sendMessage(chat_id, text=f'The option {arrow.get(choice.time).to("Asia/Singapore").format("HH:mm dddd, D MMM YYYY")} was deleted')
         choice.delete()
 
 
