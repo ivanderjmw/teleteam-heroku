@@ -29,16 +29,15 @@ class CreateMeeting:
     def create_meeting(update, context):
         """Creating a meeting using a conversation interface"""
         
+        # Retrieve chat_id
+        chat_id = update.effective_message.chat.id
+
         # Clear all related chat_data
         context.chat_data.clear()
 
         if not User.objects.filter(user_id=update.message.from_user.id).exists():
             context.bot.sendMessage(chat_id=chat_id, text='‼️You need to /join a valid group to be able to create a meeting.')
             return ConversationHandler.END
-
-
-        # Retrieve chat_id
-        chat_id = update.effective_message.chat.id
 
         if update.effective_chat.type == 'private':
             context.bot.sendMessage(chat_id=chat_id, text='‼️You can only create a meeting inside a valid telegram group.')
@@ -110,6 +109,9 @@ class TelegramMeetingPoll:
     def create_poll(update, context):
         """Create Meeting Poll"""
 
+        # Retrieve chat_id
+        chat_id = update.effective_message.chat.id
+
         if not User.objects.filter(user_id=update.message.from_user.id).exists():
             context.bot.sendMessage(chat_id=chat_id, text='‼️Your telegram account is not registered yet. Try to first invite and send /start to me in your telegram group, then send /join in the same group. Or, you can login to our web client teleteam.herokuapp.com.')
             return ConversationHandler.END
@@ -117,8 +119,7 @@ class TelegramMeetingPoll:
         # Clear all related chat_data
         context.chat_data.clear()
 
-        # Retrieve chat_id
-        chat_id = update.effective_message.chat.id
+        
 
         # Make sure chat type is not a group
         if update.message.chat.type == 'group':
