@@ -22,6 +22,4 @@ class HasObjectPermission(permissions.BasePermission):
         elif object_type == Meeting:
             return request.user in obj.group.members.all()
 
-        # TODO: Fix this issue.
-        return True
-        # return obj.user == request.user
+        return obj.user == request.user
