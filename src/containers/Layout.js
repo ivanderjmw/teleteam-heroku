@@ -45,7 +45,7 @@ class AppLayout extends React.Component {
     <Sider 
     width={300} 
     className="site-layout-background"
-    breakpoint="lg"
+    breakpoint="xl"
     >
         
         <Menu

@@ -104,24 +104,12 @@ class TelegramMeetingPoll:
 
         # Make sure chat type is not a group
         if update.message.chat.type == 'group':
-            context.bot.sendMessage(chat_id=chat_id, text='Please create a meeting poll through private chat with @Teleteam_bot')
+            context.bot.sendMessage(chat_id=chat_id, text='‼️Please create a meeting poll through private chat with @Teleteam_bot')
             return ConversationHandler.END
         
-        context.bot.sendMessage(chat_id=chat_id, text='What is the meeting Poll Title?')
+        context.bot.sendMessage(chat_id=chat_id, text='📊This is the create meeting poll feature! I will guide you to create your poll which you can share with your groups.\n\nFirst, enter the meeting Poll Title.')
 
         return GET_TITLE
-        # Guide meeting creation, dates and stuff
-
-
-        # Might want to add a keyboard for common timings.
-
-        # Edit message according to the poll options
-
-        # Share button
-
-        # Inline message in the group to refer to the poll.
-
-        # Create percentages of polls, names too.
 
     def get_title(update, context):
         """Get the title"""
@@ -141,11 +129,13 @@ class TelegramMeetingPoll:
         LOGGER.info("Poll is created %s" % new_poll)
 
         new_poll_message = context.bot.sendMessage(chat_id=chat_id, text=new_poll.message[1], parse_mode=ParseMode.HTML)
-        context.bot.sendMessage(chat_id=chat_id, text=f'Now Text me some date-time choices to include!\nPoll id: {str(new_poll.id)}')
+        context.bot.sendMessage(chat_id=chat_id, text=f'Now Text me some date-time choices to include in the meeting poll!')
 
 
         context.chat_data['poll_message_id'] = new_poll_message.message_id
         context.chat_data['poll_id'] = new_poll.id
+        context.chat_data['poll_choice_stack'] = []
+
 
         return ADD_CHOICES
 
@@ -163,11 +153,21 @@ class TelegramMeetingPoll:
         poll = Poll.objects.get(id=poll_id)
 
         # Create a new choice based on user input
-        new_poll_choice = dateparser.parse(update.message.text)
-        new_choice = Choice(poll=poll, time=new_poll_choice)
+        # User inputs the Task due date, then prompts for users
+        choice_time = dateparser.parse(update.message.text)
+        if choice_time is None or len(update.message.text) < 4:
+            context.bot.sendMessage(update.message.chat_id, text='‼️That\'s not a proper date, please reenter a valid date.')
+            return ADD_CHOICES
+        
+        print(f'Add choice {choice_time}')
+        new_choice = Choice(poll=poll, time=choice_time)
         new_choice.save()
 
         # Put in a stack
+        if not context.chat_data['poll_choice_stack']:
+            context.chat_data['poll_choice_stack'] = [new_choice.id]
+        else:
+            context.chat_data['poll_choice_stack'].append([new_choice.id])
 
         # Edit the poll message
         text = poll.message[1]
@@ -176,13 +176,34 @@ class TelegramMeetingPoll:
         return ADD_CHOICES
 
     def undo_choices(update, context):
+
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
-         # Edit the poll message
-        text = "This command is under construction."
-        context.bot.sendMessage(chat_id=chat_id, text=text)
-        pass
+        # Retrieve poll_id
+        poll_id = context.chat_data['poll_id']
+        poll_message_id = context.chat_data['poll_message_id']
+
+        # Retrieve poll object
+        poll = Poll.objects.get(id=poll_id)
+
+        # Pop from stack
+        if not context.chat_data['poll_choice_stack']:
+            text = "‼️Error encountered, choice stack is empty. Please redo the previous command."
+            context.bot.sendMessage(chat_id=chat_id, text=text)
+            return ConversationHandler.END
+
+        choice_id = context.chat_data['poll_choice_stack'].pop()
+        print(f'Choice id to delete is {choice_id}')
+
+        # Delete choice object
+        choice = Choice.objects.get(id=choice_id)
+        choice.delete()
+
+        # Edit the poll message
+        text = poll.message[1]
+        context.bot.editMessageText(chat_id=chat_id, message_id=poll_message_id, text=text, parse_mode=ParseMode.HTML)
+        return ADD_CHOICES
 
     def publish(update, context):
         """Allows user to publish the poll in any groups"""
@@ -355,6 +376,8 @@ def cancel(update, context):
 
     # Retrieve chat_id
     chat_id = update.effective_message.chat.id
+
+    context.chat_data.clear()
 
     context.bot.sendMessage(chat_id=chat_id, text="Cancelled!", parse_mode=ParseMode.HTML)
     return ConversationHandler.END

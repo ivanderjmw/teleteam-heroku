@@ -115,7 +115,7 @@ class Poll(models.Model):
         msg = []
         chc = {}
 
-        msg.append(self.title)
+        msg.append('📊'+ self.title)
         msg.append("")
 
         choices = Choice.objects.filter(poll=self).order_by('time')
