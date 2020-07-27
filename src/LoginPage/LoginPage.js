@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import axios from 'axios';
 import 'antd/dist/antd.css';
 import './LoginPage.css'
+import getUserLogin from '../helpers'
 import TelegramLoginButton from 'react-telegram-login';
 
 
@@ -15,8 +16,10 @@ const handleTelegramResponse = response => {
 class LoginPage extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
     }
+
+
 
     loginUser = async (user) => {
         await axios.post('create', {

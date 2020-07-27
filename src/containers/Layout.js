@@ -64,7 +64,7 @@ class AppLayout extends React.Component {
           </SubMenu>
           <SubMenu key="sub2" icon={<LaptopOutlined />} title="Account">
             <Menu.Item key="5"><Link to={"/settings"}>Settings</Link></Menu.Item>
-            <Menu.Item key="6"><Link to={"/login"} onClick={()=>{localStorage.setItem('logged_in', false);localStorage.removeItem('user_id');localStorage.removeItem('token');}}>Sign out</Link></Menu.Item>
+            <Menu.Item key="6"><Link to={"/login"} onClick={this.props.onLogout}>Sign out</Link></Menu.Item>
           </SubMenu>
         </Menu>
       </Sider>

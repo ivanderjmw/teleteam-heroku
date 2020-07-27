@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch, Link, useLocation, Redirect } from 'react
 import 'antd/dist/antd.css';
 import './index.css';
 import './App.css';
+import {getLoginStatus} from './helpers';
 import axios from 'axios';
 
 import { CreateMeetingButton, CreateTaskButton } from './components';
@@ -77,7 +78,7 @@ class Protected extends Component {
       );
     }
     return (
-    <AppLayout groups={this.state.groups} user={this.state.user} updateGroups={this.updateGroups}>  
+    <AppLayout groups={this.state.groups} user={this.state.user} updateGroups={this.updateGroups} onLogout={this.props.onLogout}>  
       <Switch>
         <Route path="/" exact render={props => 
           <HomePage {...props} user={this.state.user} group={this.state.groups} /> 
@@ -100,28 +101,18 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-
-    this.handleLogin = this.handleLogin.bind(this)
-  }
-
-  state = {
-    // TODO: Implement this logged in value INTO LOCAL STORAGE
-    loggedIn: this.getLoginStatus(),
-  }
-
-  getLoginStatus () {
-    try {
-      return localStorage.getItem('logged_in') == 'true'
-    } catch (error) {
-      localStorage.setItem('logged_in', false)
-      return false
+    this.state = {
+      loggedIn: getLoginStatus(),
     }
+    console.log(this.state.loggedIn);
+    this.handleLogin = this.handleLogin.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   // This function is passed on to loginpage.js
   handleLogin = res => {
     localStorage.setItem('logged_in', true);
-    this.setState({loggedIn: this.getLoginStatus()});
+    this.setState({loggedIn: getLoginStatus()});
 
     // Store userid and token in local storage
     localStorage.setItem('user_id', res.data.user_id);
@@ -129,16 +120,20 @@ class App extends Component {
 
   }
 
+  handleLogout = res => {
+    localStorage.setItem('logged_in', false);
+    this.setState({loggedIn: getLoginStatus()});
+
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('token');
+  }
+
   render () {
-    if (this.state.loggedIn != this.getLoginStatus()) {
-      this.setState({loggedIn: this.getLoginStatus()});
-      console.log(`Change login state to ${this.state.loggedIn}`)
-    }
     return (
         <div className="App">
           <Switch>
             <Route path="/login" render={props => <LoginPage onLogin={this.handleLogin} {...props}/>}/>
-            <PrivateRoute isLoggedIn={ this.state.loggedIn } path="/" component={Protected} />
+            <PrivateRoute isLoggedIn={ this.state.loggedIn } onLogout={this.handleLogout} path="/" component={Protected} />
           </Switch>
         </div>
     );
