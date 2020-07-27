@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import { Card, Tag, Modal, Form, Typography, Input, DatePicker, Select, notification } from "antd";
 
-import getDeadlineTagColor from "../helpers";
+import {getDeadlineTagColor} from "../helpers";
 
 const { Option } = Select;
 

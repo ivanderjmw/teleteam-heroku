@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { Avatar, Tag } from "antd";
 
-import getDeadlineTagColor from "../helpers";
+import {getDeadlineTagColor} from "../helpers";
 
 class SidebarGroup extends Component {
     constructor(props) {

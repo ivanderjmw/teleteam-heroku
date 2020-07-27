@@ -8,4 +8,12 @@ const getDeadlineTagColor = (daysLeft) => {
     }
 };
 
-export default getDeadlineTagColor;
+function getLoginStatus () {
+    try {
+      return localStorage.getItem('logged_in') == 'true'
+    } catch (error) {
+      return false
+    }
+}
+
+export {getDeadlineTagColor, getLoginStatus};
