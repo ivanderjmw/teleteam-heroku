@@ -76,13 +76,18 @@ def join_group(group_chat, user):
 
 def create_task(chat_id, title, deadline, assigned_usernames):
     """Create task from several inputs, handles multiple username assignments"""
+
     try:
         # Get objects from other tables
         group = Group.objects.get(group_chat_id=chat_id)
         assigned_users = []
         
         for username in assigned_usernames:
-            assigned_users.append(User.objects.get(username__iexact=username))
+            # Make sure the assigned user is registered in the group.
+            user = User.objects.get(username__iexact=username)
+            if not (user in group.members):
+                raise KeyError
+            assigned_users.append(user)
 
         new_task = Task(group=group, title=title, deadline=deadline)
         new_task.save()
