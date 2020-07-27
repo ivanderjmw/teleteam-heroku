@@ -53,7 +53,10 @@ class Group(models.Model):
 
     @property
     def closest_deadline(self):
-        return self.task_set.filter(done=False).order_by('deadline').first().deadline
+        if len(self.tasks) == 0:
+            return None
+        else:
+            return self.task_set.filter(done=False).order_by('deadline').first().deadline
 
     @property
     def photo_url(self):

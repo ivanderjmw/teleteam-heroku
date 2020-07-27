@@ -20,6 +20,8 @@ class SidebarGroup extends Component {
     // Automatically find the closest deadline of the tasks in the group, and 
     // return a "... days" tag
     getClosestDeadlineTag = () => {
+        if (this.state.group.closest_deadline == null) return;
+
         let min = moment(this.state.group.closest_deadline);
 
         const daysToClosestDeadline = min.diff(moment(), 'days')+1;
