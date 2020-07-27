@@ -1,6 +1,7 @@
 """Meeting User commands"""
 import dateparser
 import datetime
+import arrow
 
 from django.utils.timezone import make_aware
 
@@ -227,7 +228,10 @@ class TelegramMeetingPoll:
 
         # Delete choice object
         choice = Choice.objects.get(id=choice_id)
+        # Notify the user about undo success button
+        context.bot.sendMessage(chat_id, text=f'The option {arrow.get(choice.time).to('Asia/Singapore').format("HH:mm dddd, D MMM YYYY")} was deleted')
         choice.delete()
+
 
         # Edit the poll message
         text = poll.message[1]
@@ -253,6 +257,9 @@ class TelegramMeetingPoll:
 
         LOGGER.info("Edit the poll message")
         context.bot.editMessageReplyMarkup(chat_id=chat_id, message_id=poll_message_id, reply_markup=inline_keyboard)
+
+        # Notify the user about the share button
+        context.bot.sendMessage(chat_id, text='👍Poll message has been published! Scroll up and click on the share button, then pick a group you want to send to.')
 
         LOGGER.info("Clear chat data")
         context.chat_data.clear()
