@@ -88,7 +88,7 @@ class CreateMeeting:
                 title=context.chat_data['meeting_title'],
                 time=context.chat_data['meeting_time'],
             )
-        except TelegramError, KeyError:
+        except (TelegramError, KeyError):
             # Notify user to use the group chat
             text = f"‼️Seems like you are not in a valid group group"
             context.bot.sendMessage(text=text)
