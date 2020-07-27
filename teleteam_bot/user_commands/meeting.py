@@ -15,7 +15,7 @@ from telegram.ext import (ConversationHandler,
                           Filters)
 from telegram import (
     ParseMode, TelegramError, InlineKeyboardButton, 
-    InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
+    InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent,
     Chat)
 
 import logging
