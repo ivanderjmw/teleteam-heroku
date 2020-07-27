@@ -160,6 +160,7 @@ class UserSettingsRetrieveUpdateView(APIView):
 
     def get(self, request, pk, format=None):
         settings = self.get_object(pk)
+        print("SETTINGS: ", settings)
         serializer = UserSettingsSerializer(settings)
         return Response(serializer.data)
 

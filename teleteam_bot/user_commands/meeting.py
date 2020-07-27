@@ -339,9 +339,9 @@ def list_meetings(update, context):
             text_to_append = '<b>' + str(meeting.title) + '</b> - ' 
 
             if update.effective_message.chat.type == 'private':
-                text_to_append += meeting.group.chat_title + ' '
+                text_to_append += meeting.group.chat_title
             
-            text_to_append += str(meeting.time.strftime('%A, %d %b %Y at %l:%M %p'))
+            text_to_append += '\n' + str(meeting.time.strftime('%A, %d %b %Y at %l:%M %p')) + '\n'
             text_arr.append(text_to_append)
 
         text = '\n'.join(text_arr)

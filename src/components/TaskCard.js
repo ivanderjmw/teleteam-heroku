@@ -5,7 +5,7 @@ import { Card, Tag, Modal, Form, Typography, Input, DatePicker, Select, Checkbox
 import { Link } from 'react-router-dom';
 
 
-import getDeadlineTagColor from "../helpers";
+import {getDeadlineTagColor} from "../helpers";
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
