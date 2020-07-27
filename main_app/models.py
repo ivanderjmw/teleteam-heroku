@@ -126,12 +126,12 @@ class Poll(models.Model):
             for i, choice in enumerate(choices):
                 chc[i] = choice
                 msg.append(f"<b>{i}: </b>"
-                           + choice.time.strftime('%A, %d %b %Y at %-l:%M%p')
+                           + arrow.get(choice.time).to('Asia/Singapore').format("HH:mm dddd, D MMM YYYY")
                            + " - "
                            + str(Vote.objects.filter(choice=choice).count())
                            + " votes"
                            + "\n"
-                           + " ,".join(vote.user.username for vote in Vote.objects.filter(choice=choice))
+                           + ", ".join(vote.user.username for vote in Vote.objects.filter(choice=choice))
                            + "\n"
                            )
 
