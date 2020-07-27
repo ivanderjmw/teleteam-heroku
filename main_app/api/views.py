@@ -71,7 +71,14 @@ class UserCreateView(CreateAPIView):
             print(user_updated)
             return user_updated
         
-        serializer.save()
+        user = serializer.save()
+
+        user_settings = UserSettings()
+        user_settings.save()
+
+        user.settings = user_settings
+        user.save()
+        
         return serializer.data
 
 @permission_classes((HasObjectPermission, ))
