@@ -20,8 +20,7 @@ def create_new_task(update, context):
     if update.effective_message.chat.type == Chat.PRIVATE:
         context.bot.sendMessage(
             update.message.chat_id, 
-            text='The /createtask command is not available inside a private chat. \
-            Please use the command in a Teleteam registered group.')
+            text='The /createtask command is not available inside a private chat. Please use the command in a Teleteam registered group.')
         return ConversationHandler.END
 
     # Check if user has /join-ed.
@@ -29,7 +28,7 @@ def create_new_task(update, context):
         user_creating_task = User.objects.get(user_id = update.effective_message.from_user.id)
         if not (user_creating_task in Group.objects.get(group_chat_id = chat_id).members.all()):
             raise KeyError
-    except KeyError as e:
+    except:
         context.bot.sendMessage(
             update.message.chat_id, 
             text='Please /join the group before starting the /createtask command.')
@@ -107,6 +106,7 @@ def get_assigned_users(update, context):
     # Calls create_task
     try:
         create_task(newtask.chat_id, newtask.title, newtask.deadline, assigned_users_list)
+        print("/CREATETASK create_task() helper function ran successfully.")
         TaskSession.objects.filter(chat_id=update.effective_chat.id).delete()
     except Exception as e:
         LOGGER.info("{}".format(e))
