@@ -85,7 +85,7 @@ def create_task(chat_id, title, deadline, assigned_usernames):
         for username in assigned_usernames:
             # Make sure the assigned user is registered in the group.
             user = User.objects.get(username__iexact=username)
-            if not (user in group.members):
+            if not (user in group.members.all()):
                 print("/CREATETASK ERROR: User is registered, but not inside the group.")
                 raise KeyError
             assigned_users.append(user)
