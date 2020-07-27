@@ -34,9 +34,8 @@ class CreateMeeting:
 
         if update.effective_message.chat.type == Chat.PRIVATE:
             context.bot.sendMessage(
-                update.message.chat_id, 
-                text='The /createmeeting command is not available inside a private chat. \
-                Please use the command in a Teleteam registered group.')
+                update.message.chat_id
+                text='The /createmeeting command is not available inside a private chat. Please use the command in a Teleteam registered group.')
             return ConversationHandler.END
 
         # Clear all related chat_data
