@@ -18,13 +18,13 @@ const WelcomeMessage = (props) => {
 
                     To start using Teleteam in your groups, please<br />
 
-                    1. Add our bot @teleteam_bot to your group.
-                    2. /start in the group to initialise the group.
-                    3. Ask each member to /join so that we know who's inside the group!
+                    1. Add our bot <Tag color='blue'>@teleteam_bot</Tag> to your group.<br />
+                    2. <Tag color='blue'>/start</Tag> in the group to initialise the group.<br />
+                    3. Ask each member to <Tag color='blue'>/join</Tag> so that we know who's inside the group!
                     <br /><br />
                     <b>Creating tasks and meetings</b><br />
                     On this web app, you can select a group and click on the "New Task" or "New Meeting" button 
-                    to create a new task or meeting. Alternatively, you can use the /createtask or /createmeeting
+                    to create a new task or meeting. Alternatively, you can use the <Tag color='blue'>/createtask</Tag> or <Tag color='blue'>/createmeeting</Tag>
                     bot command inside one of the groups.<br /><br />
 
                     We will notify and set a reminder for everyone when a new task or meeting is created.<br /><br />
