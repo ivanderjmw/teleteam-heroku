@@ -29,8 +29,15 @@ class CreateMeeting:
     def create_meeting(update, context):
         """Creating a meeting using a conversation interface"""
         
+        # Clear all related chat_data
+        context.chat_data.clear()
+
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
+
+        if update.effective_chat.type == 'private':
+            context.bot.sendMessage(chat_id=chat_id, text='‼️You can only create a meeting inside a valid telegram group.')
+            return ConversationHandler.END
 
         # Ask for the name of the meeting.
         context.bot.sendMessage(chat_id=chat_id, text='What\'s the meeting title 📜?')
@@ -60,16 +67,14 @@ class CreateMeeting:
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
-        # Retrieve the text
-        sent_time = update.message.text
-
-        # Check if it is a valid time
-        if not sent_time:
-            context.bot.sendMessage(chat_id=chat_id, text='Resend a valid time 😨. Try \'Tomorrow 3pm\'')
+        # User inputs the Task due date, then prompts for users
+        sent_time = dateparser.parse(update.message.text)
+        if sent_time is None or len(update.message.text) < 4:
+            context.bot.sendMessage(update.message.chat_id, text='‼️That\'s not a proper date, please reenter a valid date.')
             return GET_MEETING_TIME
 
         # Store it in chat_data
-        context.chat_data['meeting_time'] = make_aware(dateparser.parse(sent_time))
+        context.chat_data['meeting_time'] = make_aware(sent_time)
 
         # Now call create meeting
         try:
@@ -99,6 +104,9 @@ class TelegramMeetingPoll:
     def create_poll(update, context):
         """Create Meeting Poll"""
 
+        # Clear all related chat_data
+        context.chat_data.clear()
+
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
@@ -117,8 +125,13 @@ class TelegramMeetingPoll:
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
-        new_poll_title = update.message.text
-        new_poll_admin = User.objects.get(username=update.message.chat.username)
+        try:
+            new_poll_title = update.message.text
+            new_poll_admin = User.objects.get(user_id=update.message.from_user.id)
+        except Exception as e:
+            context.bot.sendMessage(chat_id=chat_id, text='‼️An error was encountered. Please reenter the previous command.')
+            return ConversationHandler.END
+
 
         print(type(new_poll_admin))
         print("A NEW POLL:", new_poll_title, new_poll_admin)
@@ -136,13 +149,13 @@ class TelegramMeetingPoll:
         context.chat_data['poll_id'] = new_poll.id
         context.chat_data['poll_choice_stack'] = []
 
+        print("Waiting for user's choices")
 
         return ADD_CHOICES
 
     def add_choices(update, context):
         """Get choices from the user"""
         
-        print("Waiting for user's choices")
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
@@ -163,14 +176,14 @@ class TelegramMeetingPoll:
             return ADD_CHOICES
         
         print(f'Add choice {choice_time}')
-        new_choice = Choice(poll=poll, time=choice_time)
+        new_choice = Choice(poll=poll, time=makeaware(choice_time))
         new_choice.save()
 
         # Put in a stack
         if not context.chat_data['poll_choice_stack']:
             context.chat_data['poll_choice_stack'] = [new_choice.id]
         else:
-            context.chat_data['poll_choice_stack'].append([new_choice.id])
+            context.chat_data['poll_choice_stack'].append(new_choice.id)
 
         # Edit the poll message
         text = poll.message[1]
