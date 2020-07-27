@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Menu, Breadcrumb, PageHeader } from 'antd';
-import { UserOutlined, LaptopOutlined } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb, PageHeader, Avatar } from 'antd';
+import { UserOutlined, LaptopOutlined, SolutionOutlined } from '@ant-design/icons';
 
 import { Profile } from '../components'
 import SidebarGroup from '../components/SidebarGroup'
@@ -55,11 +55,12 @@ class AppLayout extends React.Component {
           style={{ height: '100%', borderRight: 0 }}
           theme="dark"
         > 
-          
-          <Menu.Item className="user-profile-menu-item" style={{ height: '50px' }}>
-            <Profile user={this.props.user} />
-          </Menu.Item>
-          <SubMenu key="sub1" icon={<UserOutlined />} title="Your groups">
+          <SubMenu key="profile" icon={<UserOutlined />} title="Profile">
+            <Menu.Item className="user-profile-menu-item" style={{ height: '50px' }}>
+              <Profile user={this.props.user} />
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub1" icon={<SolutionOutlined />} title="Your groups">
             {!this.state.groups ? 'Loading' : this.sidebarGroups()}
           </SubMenu>
           <SubMenu key="sub2" icon={<LaptopOutlined />} title="Account">
