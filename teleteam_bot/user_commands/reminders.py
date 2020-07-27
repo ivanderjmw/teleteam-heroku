@@ -76,12 +76,12 @@ def reminder_set_notification(reminder, update_fields):
     dp = DjangoTelegramBot.dispatcher
 
     if reminder.reminding_type == TASK:
-        if (update_fields == []):
+        if (update_fields == None):
             message = "You have been assigned a task in the group \"" + reminder.task.group.chat_title + "\"\n"
         else:
             message = "Task updated in the group \"" + reminder.task.group.chat_title + "\"\n"
     else:
-        if (update_fields == []):
+        if (update_fields == None):
             message = "New meeting in the group \"" + reminder.meeting.group.chat_title + "\""
         else:
             message = "Meeting updated in the group \"" + reminder.meeting.group.chat_title + "\"\n"

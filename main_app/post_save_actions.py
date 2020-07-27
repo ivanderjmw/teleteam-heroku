@@ -25,7 +25,7 @@ def post_save_meeting(sender, instance, created, update_fields=[], **kwargs):
         Reminder.objects.filter(meeting = instance).delete()
 
     recipients = instance.group.members.filter(settings__autoCreateMeetingReminder=True).all()
-    print('a')
+
     reminders.set_reminder_to_users(
         recipients=recipients,
         task=None,
