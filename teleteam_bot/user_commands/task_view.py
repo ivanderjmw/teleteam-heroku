@@ -6,7 +6,7 @@ from telegram import Chat
 from main_app.models import Task
 from main_app.helpers import edit_assigned_users_query
 
-import dateparser
+import arrow, dateparser
 
 def select_task(update, context):
     is_private_chat = update.effective_chat.type == Chat.PRIVATE
@@ -40,6 +40,13 @@ def taskview_message(task, private_chat=False, numbering=None):
     for user in task.assigned_users.all():
         usernames += [user.username]
     deadline = task.deadline.strftime('%b %d %Y')
+
+    if arrow.get(task.deadline).to("Asia/Singapore") < arrow.now().shift(hours=3):
+        deadline = arrow.get(task.deadline).to("Asia/Singapore").humanize(granularity=["hour", "minute"])
+    elif arrow.get(task.deadline).to("Asia/Singapore").day == arrow.now().day:
+        deadline = "today at " + arrow.get(task.deadline).to("Asia/Singapore").format("HH:mm")
+    else:
+        deadline = arrow.get(task.deadline).to("Asia/Singapore").format("HH:mm dddd, D MMM YYYY")
 
     number = "" if numbering == None else str(numbering)+'. '
 

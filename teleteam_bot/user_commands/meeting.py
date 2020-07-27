@@ -32,6 +32,11 @@ class CreateMeeting:
         # Clear all related chat_data
         context.chat_data.clear()
 
+        if not User.objects.filter(user_id=update.message.from_user.id).exists():
+            context.bot.sendMessage(chat_id=chat_id, text='‼️You need to /join a valid group to be able to create a meeting.')
+            return ConversationHandler.END
+
+
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
@@ -83,10 +88,11 @@ class CreateMeeting:
                 title=context.chat_data['meeting_title'],
                 time=context.chat_data['meeting_time'],
             )
-        except TelegramError:
+        except TelegramError, KeyError:
             # Notify user to use the group chat
-            text = f"Seems like you are not in your group"
+            text = f"‼️Seems like you are not in a valid group group"
             context.bot.sendMessage(text=text)
+            return ConversationHandler.END
 
         # Review the meeting details
         text = f"Created a meeting titled {context.chat_data['meeting_title']} held on {context.chat_data['meeting_time'].strftime('%A, %d %b %Y at %l:%M %p')}"
@@ -103,6 +109,10 @@ class TelegramMeetingPoll:
 
     def create_poll(update, context):
         """Create Meeting Poll"""
+
+        if not User.objects.filter(user_id=update.message.from_user.id).exists():
+            context.bot.sendMessage(chat_id=chat_id, text='‼️Your telegram account is not registered yet. Try to first invite and send /start to me in your telegram group, then send /join in the same group. Or, you can login to our web client teleteam.herokuapp.com.')
+            return ConversationHandler.END
 
         # Clear all related chat_data
         context.chat_data.clear()
@@ -124,6 +134,8 @@ class TelegramMeetingPoll:
 
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
+
+        print(f"Received get_title from f{update.effective_message}")
 
         try:
             new_poll_title = update.message.text
@@ -176,7 +188,7 @@ class TelegramMeetingPoll:
             return ADD_CHOICES
         
         print(f'Add choice {choice_time}')
-        new_choice = Choice(poll=poll, time=makeaware(choice_time))
+        new_choice = Choice(poll=poll, time=make_aware(choice_time))
         new_choice.save()
 
         # Put in a stack

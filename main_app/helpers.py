@@ -92,22 +92,6 @@ def create_task(chat_id, title, deadline, assigned_usernames):
     except KeyError:
         raise KeyError("Either group or user is not registered yet.")
 
-    # Create a reminder for each assigned users
-    try:
-        for assigned_user in new_task.assigned_users.filter(settings__autoCreateTaskReminder=True):
-            reminder = Reminder(
-                task=new_task, 
-                meeting=None, 
-                reminding_type=TASK, 
-                recipient=assigned_user, 
-                time = deadline - assigned_user.settings.defaultTaskReminderTimedelta
-            )
-            reminder.save()
-
-            # Notify the user via a private chat that a reminder has been set
-            reminders.reminder_set_notification(reminder)
-    except Exception as e:
-        print(e)
 
 def list_tasks(chat, private_chat=False):
     if private_chat:
