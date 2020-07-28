@@ -30,6 +30,8 @@ class CreateMeeting:
     def create_meeting(update, context):
         """Creating a meeting using a conversation interface"""
         
+        print('ENTERING create_meeting')
+
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
@@ -59,6 +61,8 @@ class CreateMeeting:
     def get_meeting_title(update, context):
         """Gets the meeting title, a MessageHandler"""
 
+        print('ENTERING get_meeting_title')
+
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
 
@@ -77,6 +81,8 @@ class CreateMeeting:
 
     def get_meeting_time(update, context):
         """Gets the meeting time"""
+
+        print('ENTERING get_meeting_time')
 
         # Retrieve chat_id
         chat_id = update.effective_message.chat.id
