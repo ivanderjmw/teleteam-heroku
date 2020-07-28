@@ -161,8 +161,6 @@ class GroupPage extends React.Component {
                         />
                 </TabPane>
             </Tabs>
-            {/* TODO: <MeetingCardList meetings={this.props.group.meetings}/> */}
-            
 
             <Divider/>
 
