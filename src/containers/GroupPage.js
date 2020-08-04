@@ -161,19 +161,10 @@ class GroupPage extends React.Component {
                         />
                 </TabPane>
             </Tabs>
-            {/* TODO: <MeetingCardList meetings={this.props.group.meetings}/> */}
-            
 
             <Divider/>
 
             <TasksStatistics tasks={this.state.group_data.tasks} />
-
-            <Divider/>
-
-            <Title level={2}>Group Details</Title>
-            <Paragraph>Created by: Fchensan</Paragraph>
-            <Paragraph>Number of members: 2</Paragraph>
-            <Paragraph>Used teleteam since: 10 May 2020</Paragraph>
 
         </div>
     )
