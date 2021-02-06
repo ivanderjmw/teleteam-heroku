@@ -9,7 +9,6 @@ from django.conf import settings
 
 from main_app.models import UserSettings, User, Group, Task, Meeting, Reminder, Poll, Choice, Vote, TASK, MEETING
 from teleteam_bot.user_commands import reminders
-from teleteam_bot.telegrambot import get_group_photo
 
 def start_group(group_chat, bot):
     """
