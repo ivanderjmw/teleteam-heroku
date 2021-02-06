@@ -14,8 +14,6 @@ from django.core.files import File
 
 from django_telegrambot.apps import DjangoTelegramBot
 
-from main_app.helpers import get_photo_url_else_avatar
-
 upload_storage = FileSystemStorage(location=settings.STATIC_ROOT, base_url='/static')
 
 TASK = 1
