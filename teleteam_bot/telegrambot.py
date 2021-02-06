@@ -1,4 +1,4 @@
-"""This is the main telegram bot module"""
+import os
 
 from telegram.ext import (
     CommandHandler,
@@ -10,6 +10,7 @@ from telegram.ext import (
 )
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from django_telegrambot.apps import DjangoTelegramBot
+from django.core.files import File
 
 
 
@@ -30,6 +31,7 @@ from .user_commands.reminders import delete_reminder, reminder_change_time, remi
 import main_app.helpers as helpers
 
 LOGGER = logging.getLogger('django')
+__bot = None
 
 def error(update, context):
     LOGGER.warn('Update "%s" caused error "%s"' % (update, context.error))
@@ -65,3 +67,37 @@ def main():
     dp.add_handler(CallbackQueryHandler(TelegramMeetingPoll.manage_vote, pattern='POLL:'))
 
     dp.add_error_handler(error)
+
+    __bot = dp.bot
+
+
+def get_group_photo(group_chat_id):
+    # Try to get the telegram chat photo
+    try:
+        # Get chat object from Telegram API
+        chat = __bot.get_chat(group_chat_id)
+
+        # Get photo url from Telegram API
+        photo_file = chat.photo.get_small_file()
+
+        path = settings.MEDIA_ROOT+str(chat.id)+'.jpg'
+
+        # Download to media folder
+        photo_file.download(custom_path=path)
+
+        # Open the file
+        photo = File(open(path, 'rb'))
+
+        # Remove the temporary file path
+        os.remove(path)
+
+        print(f'Group Photo is retrieved for {chat.title}')
+
+        return File(photo)
+    except Exception as e:
+        print(e)
+        return None
+
+
+def get_bot():
+    return __bot

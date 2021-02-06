@@ -2,11 +2,15 @@
 import uuid
 import arrow
 from datetime import datetime, timedelta
-
 from django.db import models
 from django.utils.timezone import now
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.http import request
+
+from teleteam_bot.telegrambot import get_group_photo
+
+from main_app.helpers import get_photo_url_else_avatar
 
 upload_storage = FileSystemStorage(location=settings.STATIC_ROOT, base_url='/static')
 
@@ -35,12 +39,19 @@ class User(models.Model):
     def __str__(self):
         return f"{self.user_id}:{self.username}"
 
+    def get_photo_url(self):
+        return get_photo_url_else_avatar(self.photo_url, 
+            ' '.join([self.first_name, self.last_name])
+        )
+
 class Group(models.Model):
     """Group model for Teleteam"""
     group_chat_id = models.IntegerField()
     chat_title = models.CharField(max_length=50)
     members = models.ManyToManyField(User)
+    chat = models.
     photo = models.ImageField(upload_to='media/', null=True, storage=upload_storage)
+    
     def __str__(self):
         return f"{self.group_chat_id}:{self.chat_title}"
 
@@ -61,10 +72,8 @@ class Group(models.Model):
 
     @property
     def photo_url(self):
-        if (self.photo):
-            return self.photo.url
-        else:
-            return
+        self.photo = get_group_photo(self.group_chat_id)
+        return self.photo.url
 
 class Task(models.Model):
     """Task model for Teleteam"""
