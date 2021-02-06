@@ -10,8 +10,9 @@ from django.utils.timezone import now
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.http import request
+from django.core.files import File
 
-from teleteam_bot.telegrambot import get_group_photo
+from django_telegrambot.apps import DjangoTelegramBot
 
 from main_app.helpers import get_photo_url_else_avatar
 
@@ -21,6 +22,33 @@ TASK = 1
 MEETING = 2
 
 # HELPER
+
+def get_group_photo(group_chat_id):
+    # Try to get the telegram chat photo
+    try:
+        # Get chat object from Telegram API
+        chat = DjangoTelegramBot.dispatcher.bot.get_chat(group_chat_id)
+
+        # Get photo url from Telegram API
+        photo_file = chat.photo.get_small_file()
+
+        path = settings.MEDIA_ROOT+str(chat.id)+'.jpg'
+
+        # Download to media folder
+        photo_file.download(custom_path=path)
+
+        # Open the file
+        photo = File(open(path, 'rb'))
+
+        # Remove the temporary file path
+        os.remove(path)
+
+        print(f'Group Photo is retrieved for {chat.title}')
+
+        return File(photo)
+    except Exception as e:
+        print(e)
+        return None
 
 def get_photo_url_else_avatar(photo_url, name):
 
