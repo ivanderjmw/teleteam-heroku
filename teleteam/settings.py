@@ -192,7 +192,7 @@ DJANGO_TELEGRAMBOT = {
 
     'BOTS' : [
         {
-           'TOKEN': '1160495867:AAF90CYdpZXg1bf7eWg8geqm4pYZqstepaY', #Your bot token.
+           'TOKEN': os.getenv('BOT_TOKEN'), #Your bot token.
 
            'CONTEXT': True,  # Use context based handler functions
 
