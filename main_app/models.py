@@ -49,7 +49,6 @@ class Group(models.Model):
     group_chat_id = models.IntegerField()
     chat_title = models.CharField(max_length=50)
     members = models.ManyToManyField(User)
-    chat = models.
     photo = models.ImageField(upload_to='media/', null=True, storage=upload_storage)
     
     def __str__(self):
