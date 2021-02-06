@@ -1,5 +1,4 @@
-import os
-import logging
+"""This is the main telegram bot module"""
 
 from telegram.ext import (
     CommandHandler,
@@ -14,6 +13,10 @@ from django_telegrambot.apps import DjangoTelegramBot
 
 
 
+import logging
+
+
+from main_app.models import *
 from .user_commands.create_task import CREATE_TASK_HANDLER
 from .user_commands.help import help
 from .user_commands.join import join
@@ -27,7 +30,6 @@ from .user_commands.reminders import delete_reminder, reminder_change_time, remi
 import main_app.helpers as helpers
 
 LOGGER = logging.getLogger('django')
-__bot = None
 
 def error(update, context):
     LOGGER.warn('Update "%s" caused error "%s"' % (update, context.error))
@@ -63,5 +65,3 @@ def main():
     dp.add_handler(CallbackQueryHandler(TelegramMeetingPoll.manage_vote, pattern='POLL:'))
 
     dp.add_error_handler(error)
-
-    __bot = dp.bot

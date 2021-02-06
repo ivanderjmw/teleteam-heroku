@@ -28,7 +28,6 @@ python-telegram-bot==12.7
 pytz==2020.1
 psycopg2-binary
 regex==2020.5.14
-requests==2.22.0
 six==1.14.0
 sqlparse==0.3.1
 timeloop==1.0.2

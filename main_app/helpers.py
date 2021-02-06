@@ -1,3 +1,6 @@
+"""
+Helper functions for Database Queries
+"""
 import os
 import dateparser
 from datetime import datetime, timedelta
@@ -5,30 +8,45 @@ from datetime import datetime, timedelta
 
 from django.utils.timezone import now, make_aware
 from django.core.files import File
-from django.conf import settings
-
 from main_app.models import UserSettings, User, Group, Task, Meeting, Reminder, Poll, Choice, Vote, TASK, MEETING
 from teleteam_bot.user_commands import reminders
+from django.conf import settings
 
 def start_group(group_chat, bot):
-    """
-    Returns None if the group exists, True if successfully created a new group
-    Updates the group photo
-    """
 
     # Check if group already exists.
     if Group.objects.filter(group_chat_id=group_chat.id).exists():
-        groupIsNew = False
+        flag = None
         new_group = Group.objects.get(group_chat_id=group_chat.id)
     else:
-        groupIsNew = True
+        flag = True
         new_group = Group(group_chat_id=group_chat.id, chat_title=group_chat.title)
     
     # Try to get the telegram chat photo
-    new_group.photo = get_group_photo(group_chat.id)
+    try:
+        # Get chat object from Telegram API
+        chat = bot.get_chat(group_chat.id)
+
+        # Get photo url from Telegram API
+        photo_file = chat.photo.get_small_file()
+
+        path = settings.MEDIA_ROOT+str(chat.id)+'.jpg'
+
+        # Download to media folder
+        photo_file.download(custom_path=path)
+
+        # Open the file
+        photo = open(path, 'rb')
+        new_group.photo = File(photo)
+        os.remove(path)
+
+        print(f'Group Photo is retrieved for {chat.title}')
+    except Exception as e:
+        print(e)
+
     new_group.save()
 
-    if not groupIsNew:
+    if flag is None:
         return None
 
     return new_group
