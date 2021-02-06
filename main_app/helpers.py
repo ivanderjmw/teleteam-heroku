@@ -1,9 +1,5 @@
-"""
-Helper functions for Database Queries
-"""
 import os
 import dateparser
-import requests
 from datetime import datetime, timedelta
 
 
@@ -14,20 +10,6 @@ from django.conf import settings
 from main_app.models import UserSettings, User, Group, Task, Meeting, Reminder, Poll, Choice, Vote, TASK, MEETING
 from teleteam_bot.user_commands import reminders
 from teleteam_bot.telegrambot import get_group_photo
-
-def get_photo_url_else_avatar(photo_url, name):
-
-    response = requests.get(photo_url)
-    image = response.content
-
-    if image is not None:
-        return photo_url
-
-    r = 'https://ui-avatars.com/api/?name={}'.format(
-            '+'.join(name.split(' '))
-            )
-
-    return r
 
 def start_group(group_chat, bot):
     """

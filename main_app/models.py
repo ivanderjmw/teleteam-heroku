@@ -1,7 +1,10 @@
 """Django Models"""
 import uuid
 import arrow
+import requests
 from datetime import datetime, timedelta
+
+
 from django.db import models
 from django.utils.timezone import now
 from django.core.files.storage import FileSystemStorage
@@ -16,6 +19,24 @@ upload_storage = FileSystemStorage(location=settings.STATIC_ROOT, base_url='/sta
 
 TASK = 1
 MEETING = 2
+
+# HELPER
+
+def get_photo_url_else_avatar(photo_url, name):
+
+    response = requests.get(photo_url)
+    image = response.content
+
+    if image is not None:
+        return photo_url
+
+    r = 'https://ui-avatars.com/api/?name={}'.format(
+            '+'.join(name.split(' '))
+            )
+
+    return r
+
+# MODELS
 
 class UserSettings(models.Model):
     """Settings for a particular User"""

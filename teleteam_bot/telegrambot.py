@@ -16,8 +16,6 @@ from django.core.files import File
 
 import logging
 
-
-from main_app.models import *
 from .user_commands.create_task import CREATE_TASK_HANDLER
 from .user_commands.help import help
 from .user_commands.join import join
