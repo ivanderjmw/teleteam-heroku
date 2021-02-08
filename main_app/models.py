@@ -137,13 +137,15 @@ class Group(models.Model):
 
     @property
     def photo_url(self):
-        photo = get_group_photo(self.group_chat_id)
-        if photo is not None:
-            if self.photo is not None:
+        temp_photo = get_group_photo(self.group_chat_id)
+        if temp_photo is not None:
+            if self.photo is not None and os.path.isfile(self.photo.path):
                 os.remove(self.photo.path)
-            self.photo = photo
+
+            self.photo = temp_photo
             self.save()
             return self.photo.url
+
         else:
             return None
 
