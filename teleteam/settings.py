@@ -10,13 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-ON_HEROKU = True
-
 import os
-
-if ON_HEROKU:
-    import django_heroku
-
+import django_heroku
 import dj_database_url
 
 from corsheaders.defaults import default_headers
@@ -48,15 +43,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    
-    'whitenoise.runserver_nostatic',
+    'django.contrib.staticfiles',
+
     'corsheaders',
 
     'django_telegrambot',
     'teleteam_bot',
     'main_app.apps.MainAppConfig',
     'rest_framework',
-    'django.contrib.staticfiles',
+    
 ]
 
 MIDDLEWARE = [
@@ -94,21 +89,13 @@ WSGI_APPLICATION = 'teleteam.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if ON_HEROKU:
-    DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600),
-        'localhost': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
+DATABASES = {
+    'default': dj_database_url.config(conn_max_age=600),
+    'localhost': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
+}
 
 
 # Password validation
@@ -205,7 +192,7 @@ DJANGO_TELEGRAMBOT = {
 
     'BOTS' : [
         {
-           'TOKEN': os.getenv('BOT_TOKEN'), #Your bot token.
+           'TOKEN': '1160495867:AAF90CYdpZXg1bf7eWg8geqm4pYZqstepaY', #Your bot token.
 
            'CONTEXT': True,  # Use context based handler functions
 
@@ -288,10 +275,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-if ON_HEROKU:
+# Django_heroku settings
+django_heroku.settings(locals(), logging=False)
 
-    # Django_heroku settings
-    django_heroku.settings(locals(), logging=False)
-
-    # SSLMODE issue workaround
-    del DATABASES['default']['OPTIONS']['sslmode']
+# SSLMODE issue workaround
+del DATABASES['default']['OPTIONS']['sslmode']

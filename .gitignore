@@ -4,8 +4,6 @@
 debug.log
 env/*
 .vscode/*
-db.sqlite3
-staticfiles/*
 
 # python
 **.pyc
