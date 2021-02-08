@@ -1,17 +1,77 @@
 """Django Models"""
 import uuid
 import arrow
+import requests
+import os
 from datetime import datetime, timedelta
 
 from django.db import models
 from django.utils.timezone import now
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.core.files import File
+
+from django_telegrambot.apps import DjangoTelegramBot
+
+import logging
+
+LOGGER = logging.getLogger('django')
 
 upload_storage = FileSystemStorage(location=settings.STATIC_ROOT, base_url='/static')
 
 TASK = 1
 MEETING = 2
+
+# HELPER
+
+def get_group_photo(group_chat_id):
+    # Try to get the telegram chat photo
+
+    # Get chat object from Telegram API
+    chat = DjangoTelegramBot.dispatcher.bot.get_chat(group_chat_id)
+
+    LOGGER.info("Getting chat photo of {}".format(chat.title))
+
+    if chat.photo is None:
+        return None
+
+    # Get photo url from Telegram API
+    photo_file = chat.photo.get_small_file()
+
+    LOGGER.info("Retrieved photo_file of size {}".format(photo_file.file_size))
+
+    path = settings.MEDIA_ROOT+str(chat.id)+'.jpg'
+
+
+    # Download to media folder
+    photo_file.download(custom_path=path)
+
+    # Open the file
+    photo = File(open(path, 'rb'))
+
+    # Remove the temporary file path
+    os.remove(path)
+
+    LOGGER.info(f'Group Photo is retrieved for {chat.title}')
+
+    return File(photo)
+
+def get_photo_url_else_avatar(photo_url, name):
+
+    if photo_url is not None:
+        response = requests.get(photo_url)
+        image = response.content
+
+        LOGGER.info("Retrieved user photo of size {}".format(len(image)))
+
+        if len(image) > 42:
+            return photo_url
+
+    r = 'https://ui-avatars.com/api/?name={}'.format(
+            '+'.join(name.split(' '))
+            )
+
+    return r
 
 class UserSettings(models.Model):
     """Settings for a particular User"""
@@ -29,18 +89,34 @@ class User(models.Model):
     username = models.CharField(max_length=32)
     first_name = models.CharField(max_length=64, null=True)
     last_name = models.CharField(max_length=64, null=True)
-    photo_url = models.CharField(max_length=256, null=True)
+    photo_telegram_url = models.CharField(max_length=256, null=True)
     settings = models.ForeignKey(UserSettings, on_delete=models.CASCADE, default=None, null=True)
     
     def __str__(self):
         return f"{self.user_id}:{self.username}"
+
+    def full_name(self):
+        if self.first_name is not None:
+            if self.last_name is not None:
+                return self.first_name + " " + self.last_name
+            else:
+                return self.first_name
+        else:
+            return self.username
+    
+    @property
+    def photo_url(self):
+        return get_photo_url_else_avatar(
+            self.photo_telegram_url, 
+            self.full_name()
+            )
 
 class Group(models.Model):
     """Group model for Teleteam"""
     group_chat_id = models.IntegerField()
     chat_title = models.CharField(max_length=50)
     members = models.ManyToManyField(User)
-    photo = models.ImageField(upload_to='media/', null=True, storage=upload_storage)
+    photo = models.ImageField(upload_to='group-photos/', null=True, storage=upload_storage)
     def __str__(self):
         return f"{self.group_chat_id}:{self.chat_title}"
 
@@ -61,10 +137,15 @@ class Group(models.Model):
 
     @property
     def photo_url(self):
-        if (self.photo):
+        photo = get_group_photo(self.group_chat_id)
+        if photo is not None:
+            if self.photo is not None:
+                os.remove(self.photo.path)
+            self.photo = photo
+            self.save()
             return self.photo.url
         else:
-            return
+            return None
 
 class Task(models.Model):
     """Task model for Teleteam"""
