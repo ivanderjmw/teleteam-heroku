@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='user',
-            name='photo_url',
+            name='photo_telegram_url',
             field=models.CharField(max_length=256, null=True),
         ),
     ]

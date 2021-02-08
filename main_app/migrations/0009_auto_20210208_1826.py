@@ -11,11 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='user',
-            old_name='photo_url',
-            new_name='photo_telegram_url',
-        ),
         migrations.AlterField(
             model_name='group',
             name='photo',
