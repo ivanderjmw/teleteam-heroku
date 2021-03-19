@@ -8,7 +8,7 @@ cryptography==2.9.2
 dateparser==0.7.4
 decorator==4.4.2
 dj-database-url==0.5.0
-Django==3.0.6
+Django==3.1.6
 django-cors-headers==3.4.0
 django-filter==2.3.0
 -e git+https://github.com/telebotter/django-telegrambot.git@5f07ec585086eca9f26d10305eca58fe21c67a6d#egg=django_telegrambot
