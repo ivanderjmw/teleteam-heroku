@@ -12,7 +12,7 @@ Django==3.0.6
 django-cors-headers==3.4.0
 django-filter==2.3.0
 -e git+https://github.com/telebotter/django-telegrambot.git@5f07ec585086eca9f26d10305eca58fe21c67a6d#egg=django_telegrambot
-djangorestframework==3.12.2
+djangorestframework==3.11.2
 emoji==0.6.0
 idna==2.10
 isort==5.7.0
